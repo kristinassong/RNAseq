@@ -15,6 +15,8 @@ path=$run/bcl
 sample_sheet=$path/sample_sheet.csv
 outpath=$run/fastq
 
+mkdir -p $outpath &&
+
 bcl2fastq -R $path -o $outpath --sample-sheet $sample_sheet \
 --minimum-trimmed-read-length 13 --mask-short-adapter-reads 13 \
 --no-lane-splitting -p 4 
