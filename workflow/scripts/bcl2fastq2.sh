@@ -10,6 +10,9 @@
 
 ### Modified from Gabrielle's script 
 
+source /home/kris98/miniconda3/etc/profile.d/conda.sh &&
+conda activate snakemake &&
+
 run=../../data/samples/220923_NB502083_0194_AHVGMKBGXM
 path=$run/bcl
 sample_sheet=$path/sample_sheet.csv
@@ -20,3 +23,5 @@ mkdir -p $outpath &&
 bcl2fastq -R $path -o $outpath --sample-sheet $sample_sheet \
 --minimum-trimmed-read-length 13 --mask-short-adapter-reads 13 \
 --no-lane-splitting -p 4 
+
+conda deactivate
