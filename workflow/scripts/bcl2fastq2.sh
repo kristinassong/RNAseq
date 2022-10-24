@@ -1,7 +1,7 @@
 #!/bin/bash
 
 #SBATCH --mail-type=END,FAIL
-#SBATCH --mail-user=$JOBMAIL
+#SBATCH --mail-user=kristina.song@usherbrooke.ca
 #SBATCH --time=5:00:00
 #SBATCH --output=%u.%x-%A[%a].out
 #SBATCH --error=%u.%x-%A[%a].err
