@@ -1,2 +1,2 @@
-samples: config/samples.tsv
-bcl: 
+path:
+ fastq: "data/samples/220923_NB502083_0194_AHVGMKBGXM/fastq"

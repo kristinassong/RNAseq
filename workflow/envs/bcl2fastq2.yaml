@@ -1,4 +1,0 @@
-channels:
- - bih-cubi
-dependencies:
- - bcl2fastq2 = 2.20.0.422

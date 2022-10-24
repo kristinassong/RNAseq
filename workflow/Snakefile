@@ -1,22 +1,26 @@
 import os
-from pathlib import Path
 
 __author__ = "Kristina Sungeun Song"
 __email__ = "kristina.song@usherbrooke.ca"
 
 configfile: "config/config.yaml"
 
-samples = (
-    pd.read_csv(config["samples"], sep="\t", dtype={"sample_name": str})
-    .set_index("sample_name", drop=False)
-    .sort_index()
-)
+#############################
+## Sample information
+#############################
+
+sample_sheet = pd.read_csv(config['samples'],dtype={"Sample_ID": str, "Sample_Name": str})[['Sample_ID','Sample_Name']].values.tolist()
+sample_sheet = [list(i) for i in zip(*sample_sheet)]
+sample_id = sample_sheet[0]
+sample_name = sample_sheet[1]
+
+reads = ["R1","R2"]
 
 #############################
 ## Load rules
 #############################
 
-include: "rules/conversion.smk"
+include: "rules/XXX.smk"
 
 
 #############################
@@ -25,7 +29,3 @@ include: "rules/conversion.smk"
 
 rule all:
     input:
-        fastq = expand(
-                os.path.join("results/bcl2fastq2", '{id}'),
-                id = samples
-            )
