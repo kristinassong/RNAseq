@@ -15,4 +15,6 @@ rule trimmomatic:
     threads:
         8
     wrapper:
-        "v1.17.3/bio/trimmomatic/pe" 
+        "v1.17.4/bio/trimmomatic/pe"
+    message:
+        "Filter poor quality reads in {sample} using Trimmomatic."
