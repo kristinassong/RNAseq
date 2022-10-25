@@ -1,2 +1,6 @@
 path:
  fastq: "data/samples/220923_NB502083_0194_AHVGMKBGXM/fastq"
+
+params:
+  trimmomatic: ["ILLUMINACLIP:data/Adapters-PE_NextSeq.fa:2:12:10:8:true",
+    "TRAILING:30", "LEADING:30", "MINLEN:3"]
