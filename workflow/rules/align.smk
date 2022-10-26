@@ -33,3 +33,27 @@ rule star_align:
         "v1.17.4/bio/star/align"
     message:
         "Align {sample} reads to the reference genome using STAR."
+
+rule genomecov:
+    input:
+        rules.star_align.output.aln
+    output:
+        temp("results/genomecov/{sample}.temp.bedgraph")
+    log:
+        "results/logs/genomecov/{sample}.log"
+    params:
+        "-bg -split"
+    wrapper:
+        "v1.17.4/bio/bedtools/genomecov"
+    message:
+        "Report {sample} genome coverage in BEDGRAPH format."
+
+rule genomecov_sorted:
+    input:
+        rules.genomecov.output
+    output:
+        "results/genomecov/{sample}.bedgraph"
+    shell:
+        "sort -k1,1 -k2,2n {input} > {output}"
+    message:
+        "Sort {sample} genome coverage bedgraph by chromosome and start position."
