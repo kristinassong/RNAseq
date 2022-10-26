@@ -1,37 +1,35 @@
 rule star_index:
     input:
-        fasta="resources/genome.fasta",
-        annotation="resources/genome.gtf",
+        fasta = config["path"]["genome_fasta"],
+        gtf = config["path"]["genome_gtf"]
     output:
-        directory("resources/star_genome"),
-    threads: 4
+        directory(config["path"]["star_index"])
+    threads: 
+        8
     params:
-        extra="--sjdbGTFfile resources/genome.gtf --sjdbOverhang 100",
+        extra = "--sjdbOverhang 99"
     log:
-        "logs/star_index_genome.log",
-    cache: True
+        "results/logs/star/index.log"
     wrapper:
-        "v1.14.1/bio/star/index"
+        "v1.17.4/bio/star/index"
+    message:
+        "Generate genome indexes files using STAR."
 
 rule star_align:
     input:
-        # use a list for multiple fastq files for one sample
-        # usually technical replicates across lanes/flowcells
-        fq1="reads/{sample}_R1.1.fastq",
-        fq2="reads/{sample}_R2.1.fastq",  #optional
-        idx="resources/star_genome",
+        fq1 = rules.trimmomatic.output.r1,
+        fq2 = rules.trimmomatic.output.r2,
+        idx = rules.star_index.output
     output:
-        # see STAR manual for additional output files
-        aln="star/{sample}/Aligned.out.bam",
-        reads_per_gene="star/{sample}/ReadsPerGene.out.tab",
+        aln = "results/star/{sample}/Aligned.sortedByCoord.out.bam",
+        log = "results/star/{sample}/Log.out"
     log:
-        "logs/star/{sample}.log",
+        "results/logs/star/{sample}.log"
     params:
-        # specific parameters to work well with arriba
-        extra="--quantMode GeneCounts --sjdbGTFfile resources/genome.gtf"
-        " --outSAMtype BAM Unsorted --chimSegmentMin 10 --chimOutType WithinBAM SoftClip"
-        " --chimJunctionOverhangMin 10 --chimScoreMin 1 --chimScoreDropMax 30 --chimScoreJunctionNonGTAG 0"
-        " --chimScoreSeparation 1 --alignSJstitchMismatchNmax 5 -1 5 5 --chimSegmentReadGapMax 3",
-    threads: 12
+        extra = config["params"]["star"]
+    threads:
+        8
     wrapper:
-        "v1.14.1/bio/star/align"
+        "v1.17.4/bio/star/align"
+    message:
+        "Align {sample} reads to the reference genome using STAR."
