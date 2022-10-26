@@ -9,7 +9,8 @@ configfile: "config/config.yaml"
 ## Samples Information
 #############################
 
-reads = ["R1","R2"]
+SAMPLES = config["samples"]
+READS = ["R1","R2"]
 
 
 #############################
@@ -28,26 +29,7 @@ include: "rules/quantification.smk"
 
 rule all:
     input:
-        trim = {
-            expand("results/trimmomatic/{sample}_{R}.fastq.gz", R = reads),
-            expand("results/trimmomatic/{sample}_{R}.unpaired.fastq.gz", R = reads)
-        },
-        fastqc = {
-            expand("results/fastqc_pretrim/{sample}_{R}.html", R = reads),
-            expand("results/fastqc_pretrim/{sample}_{R}_fastqc.zip", R = reads),
-            expand("results/fastqc_posttrim/{sample}_{R}.html", R = reads),
-            expand("results/fastqc_posttrim/{sample}_{R}_fastqc.zip", R = reads)
-        },
-        star = {
-            directory(config["path"]["star_index"]),
-            "results/star/{sample}/Aligned.sortedByCoord.out.bam",
-            "results/star/{sample}/Log.out"
-        },
-        bedgraphs = {
-            "results/genomecov/{sample}.bedgraph"  
-        },
-        kallisto = {
-            config["path"]["transcriptome"],
-            config["path"]["kallisto_index"],
-            directory("results/kallisto_quant/{sample}")
-        }
+        expand("results/fastqc/pretrim/{sample}_{read}.html", sample=SAMPLES, read=READS),
+        expand("results/fastqc/posttrim/{sample}_{read}.html", sample=SAMPLES, read=READS),
+        expand("results/genomecov/{sample}.bedgraph", sample=SAMPLES),
+        expand("results/kallisto/{sample}", sample=SAMPLES)

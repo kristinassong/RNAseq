@@ -10,10 +10,10 @@ rule star_index:
         extra = "--sjdbOverhang 99"
     log:
         "results/logs/star/index.log"
-    wrapper:
-        "v1.17.4/bio/star/index"
     message:
         "Generate genome indexes files using STAR."
+    wrapper:
+        "v1.17.4/bio/star/index"
 
 rule star_align:
     input:
@@ -29,10 +29,10 @@ rule star_align:
         extra = config["params"]["star"]
     threads:
         8
+    message:
+        "Align {wildcards.sample} reads to the reference genome using STAR."
     wrapper:
         "v1.17.4/bio/star/align"
-    message:
-        "Align {sample} reads to the reference genome using STAR."
 
 rule genomecov:
     input:
@@ -43,17 +43,17 @@ rule genomecov:
         "results/logs/genomecov/{sample}.log"
     params:
         "-bg -split"
+    message:
+        "Report {wildcards.sample} genome coverage in BEDGRAPH format."
     wrapper:
         "v1.17.4/bio/bedtools/genomecov"
-    message:
-        "Report {sample} genome coverage in BEDGRAPH format."
 
 rule genomecov_sorted:
     input:
         rules.genomecov.output
     output:
         "results/genomecov/{sample}.bedgraph"
+    message:
+        "Sort {wildcards.sample} genome coverage bedgraph by chromosome and start position."
     shell:
         "sort -k1,1 -k2,2n {input} > {output}"
-    message:
-        "Sort {sample} genome coverage bedgraph by chromosome and start position."

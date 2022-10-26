@@ -5,6 +5,7 @@ rule build_transcriptome:
     output:
         config["path"]["transcriptome"]
     conda:
+        "workflow/envs/gffread.yaml"
     message:
         "Build a transcriptome using gffread."
     shell:
@@ -27,16 +28,16 @@ rule kallisto_index:
 
 rule kallisto_quant:
     input:
-        fastq = [rules.trimmomatic.output.r1, rules.trimmomatic.output.r2]),
+        fastq = [rules.trimmomatic.output.r1, rules.trimmomatic.output.r2],
         index = rules.kallisto_index.output.index,
     output:
-        directory("results/kallisto_quant/{sample}"),
+        directory("results/kallisto/{sample}"),
     log:
-        "results/logs/kallisto_quant/{sample}.log",
+        "results/logs/kallisto/{sample}.log",
     threads: 1
     params:
         extra = "--bias --bootstrap-samples=50"
+    message:
+        "Quantify abundance of {wildcards.sample} reads."
     wrapper:
         "v1.17.4/bio/kallisto/quant"
-    message:
-        "Quantify abundance of {sample} reads."
