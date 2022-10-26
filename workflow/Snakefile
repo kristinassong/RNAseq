@@ -6,21 +6,20 @@ __email__ = "kristina.song@usherbrooke.ca"
 configfile: "config/config.yaml"
 
 #############################
-## Sample information
+## Samples Information
 #############################
 
-sample_sheet = pd.read_csv(config['samples'],dtype={"Sample_ID": str, "Sample_Name": str})[['Sample_ID','Sample_Name']].values.tolist()
-sample_sheet = [list(i) for i in zip(*sample_sheet)]
-sample_id = sample_sheet[0]
-sample_name = sample_sheet[1]
-
 reads = ["R1","R2"]
+
 
 #############################
 ## Load rules
 #############################
 
-include: "rules/XXX.smk"
+include: "rules/trim.smk"
+include: "rules/fastqc.smk"
+include: "rules/align.smk"
+include: "rules/quantification.smk"
 
 
 #############################
@@ -29,3 +28,26 @@ include: "rules/XXX.smk"
 
 rule all:
     input:
+        trim = {
+            expand("results/trimmomatic/{sample}_{R}.fastq.gz", R = reads),
+            expand("results/trimmomatic/{sample}_{R}.unpaired.fastq.gz", R = reads)
+        },
+        fastqc = {
+            expand("results/fastqc_pretrim/{sample}_{R}.html", R = reads),
+            expand("results/fastqc_pretrim/{sample}_{R}_fastqc.zip", R = reads),
+            expand("results/fastqc_posttrim/{sample}_{R}.html", R = reads),
+            expand("results/fastqc_posttrim/{sample}_{R}_fastqc.zip", R = reads)
+        },
+        star = {
+            directory(config["path"]["star_index"]),
+            "results/star/{sample}/Aligned.sortedByCoord.out.bam",
+            "results/star/{sample}/Log.out"
+        },
+        bedgraphs = {
+            "results/genomecov/{sample}.bedgraph"  
+        },
+        kallisto = {
+            config["path"]["transcriptome"],
+            config["path"]["kallisto_index"],
+            directory("results/kallisto_quant/{sample}")
+        }
