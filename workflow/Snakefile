@@ -21,7 +21,7 @@ include: "rules/trim.smk"
 include: "rules/fastqc.smk"
 include: "rules/align.smk"
 include: "rules/quantification.smk"
-
+#include: "rules/diffexp.smk"
 
 #############################
 ## Target rules

@@ -17,7 +17,7 @@ rule kallisto_index:
     output:
         index = config["path"]["kallisto_index"]
     log:
-        "results/logs/kallisto/index.log",
+        "results/logs/kallisto/index.log"
     threads: 1
     params: 
         extra = "--kmer-size=31"
