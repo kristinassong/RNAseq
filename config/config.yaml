@@ -1,14 +1,11 @@
 path:
- fastq: "data/samples/220923_NB502083_0194_AHVGMKBGXM/fastq"
- genome_fasta: "data/references/Homo_sapiens.GRCh38.dna.primary_assembly_V101.fa"
- genome_gtf: "data/references/hg38_Ensembl_V101_Scottlab_2020.gtf"
- star_index: "data/references/star_index"
- kallisto_index: "data/references/kallisto.idx"
- transcriptome: "data/references/transcriptome.fa"
+- fastq: "data/samples/220923_NB502083_0194_AHVGMKBGXM/fastq"
+- genome_fasta: "data/references/Homo_sapiens.GRCh38.dna.primary_assembly_V101.fa"
+- genome_gtf: "data/references/hg38_Ensembl_V101_Scottlab_2020.gtf"
+- star_index: "data/references/star_index"
+- kallisto_index: "data/references/kallisto.idx"
+- transcriptome: "data/references/transcriptome.fa"
 
 params:
-  trimmomatic: ["ILLUMINACLIP:data/Adapters-PE_NextSeq.fa:2:12:10:8:true",
-    "TRAILING:30", "LEADING:30", "MINLEN:3"]
-  star: "--outReadsUnmapped Fastx --outFilterType BySJout --outSAMunmapped None "
-    "--outSAMtype BAM SortedByCoordinate --outFilterScoreMinOverLread 0.3 --outFilterMatchNminOverLread 0.3 "
-    "--outFilterMultimapNmax 100 --winAnchorMultimapNmax 100 --alignEndsProtrude 5 ConcordantPair"
+- trimmomatic: ["ILLUMINACLIP:data/Adapters-PE_NextSeq.fa:2:12:10:8:true", "TRAILING:30", "LEADING:30", "MINLEN:3"]
+- star: "--outReadsUnmapped Fastx --outFilterType BySJout --outSAMunmapped None --outSAMtype BAM SortedByCoordinate --outFilterScoreMinOverLread 0.3 --outFilterMatchNminOverLread 0.3 --outFilterMultimapNmax 100 --winAnchorMultimapNmax 100 --alignEndsProtrude 5 ConcordantPair"
