@@ -1,24 +1,42 @@
+rule build_transcriptome:
+    input:
+        genome = config["path"]["genome_fasta"],
+        gtf = config["path"]["genome_gtf"]
+    output:
+        config["path"]["transcriptome"]
+    conda:
+    message:
+        "Build a transcriptome using gffread."
+    shell:
+        "gffread {input.gtf} -g {input.genome} -w {output}"
+
 rule kallisto_index:
     input:
-        fasta="{transcriptome}.fasta",
+        fasta = rules.build_transcriptome.output
     output:
-        index="{transcriptome}.idx",
+        index = config["path"]["kallisto_index"]
     log:
-        "results/logs/kallisto/index_{transcriptome}.log",
+        "results/logs/kallisto/index.log",
     threads: 1
+    params: 
+        extra = "--kmer-size=31"
     message:
         "Builds an index from {input.fasta}."
     wrapper:
-        "v1.14.1/bio/kallisto/index"
+        "v1.17.4/bio/kallisto/index"
 
 rule kallisto_quant:
     input:
-        fastq=["reads/{exp}_R1.fastq", "reads/{exp}_R2.fastq"],
-        index="index/transcriptome.idx",
+        fastq = [rules.trimmomatic.output.r1, rules.trimmomatic.output.r2]),
+        index = rules.kallisto_index.output.index,
     output:
-        directory("quant_results_{exp}"),
+        directory("results/kallisto_quant/{sample}"),
     log:
-        "results/logs/kallisto/quant_{exp}.log",
+        "results/logs/kallisto_quant/{sample}.log",
     threads: 1
+    params:
+        extra = "--bias --bootstrap-samples=50"
     wrapper:
-        "v1.14.1/bio/kallisto/quant"
+        "v1.17.4/bio/kallisto/quant"
+    message:
+        "Quantify abundance of {sample} reads."
