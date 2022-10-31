@@ -29,4 +29,5 @@ include: "rules/fastqc.smk"
 
 rule all:
     input:
-        expand("results/fastqc/{step}/{sample}_{read}.html", sample=SAMPLES, read=READS, step=["pretrim","posttrim"])
+        expand("results/fastqc/{step}/{sample}_{read}_fastqc.html", sample=SAMPLES, read=READS, step=["pretrim","posttrim"]),
+        expand("results/fastqc/{step}/{sample}_{read}_fastqc.zip", sample=SAMPLES, read=READS, step=["pretrim","posttrim"])

@@ -1,17 +1,20 @@
 __default__:
   account: def-scottmic
   mail-user: kristina.song@usherbrooke.ca
-  mail-type: END,FAIL
+  mail-type: FAIL
   job-name: "smk_{rule}_{wildcards}"
   time: 180 # minutes
   nodes: 1
   ntasks: 1
   mem: 32000M
   cpus-per-task: 16
-  output: "results/logs/slurmout/{rule}.{wildcards}.out"
-  error: "results/logs/slurmout/{rule}.{wildcards}.err"
+  output: results/logs/slurmout/{rule}.{wildcards}.out
+  error: results/logs/slurmout/{rule}.{wildcards}.err
 
 fastqc_pretrim:
+  time: 30
+
+pretrim_fname:
   time: 30
 
 fastqc_posttrim_R1:
