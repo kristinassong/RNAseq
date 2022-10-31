@@ -1,4 +1,6 @@
 data/
+results/
+
 .DS_Store
 .snakemake/
 workflow/.snakemake/

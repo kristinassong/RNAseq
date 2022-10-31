@@ -19,8 +19,8 @@ READS = ["R1","R2"]
 
 include: "rules/trim.smk"
 include: "rules/fastqc.smk"
-include: "rules/align.smk"
-include: "rules/quantification.smk"
+#include: "rules/align.smk"
+#include: "rules/quantification.smk"
 #include: "rules/diffexp.smk"
 
 #############################
@@ -29,7 +29,4 @@ include: "rules/quantification.smk"
 
 rule all:
     input:
-        expand("results/fastqc/pretrim/{sample}_{read}.html", sample=SAMPLES, read=READS),
-        expand("results/fastqc/posttrim/{sample}_{read}.html", sample=SAMPLES, read=READS),
-        expand("results/genomecov/{sample}.bedgraph", sample=SAMPLES),
-        expand("results/kallisto/{sample}", sample=SAMPLES)
+        expand("results/fastqc/{step}/{sample}_{read}.html", sample=SAMPLES, read=READS, step=["pretrim","posttrim"])

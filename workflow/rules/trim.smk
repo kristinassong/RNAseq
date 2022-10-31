@@ -16,5 +16,14 @@ rule trimmomatic:
         8
     message:
         "Filter poor quality reads in {wildcards.sample} using Trimmomatic."
-    wrapper:
-        "v1.17.4/bio/trimmomatic/pe"
+    conda:
+        "../envs/trimmomatic.yaml"
+    shell:
+        "trimmomatic PE "
+        "-threads {threads} "
+        "{params.extra} "
+        "{input.r1} {input.r2} "
+        "{output.r1} {output.unpaired_r1} "
+        "{output.r2} {output.unpaired_r2} "
+        "{params.trimmer} "
+        "&> {log}"

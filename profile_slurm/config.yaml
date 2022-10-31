@@ -1,0 +1,6 @@
+jobs: 999
+use-conda: True
+immediate-submit: True
+notemp: True
+cluster-config: cluster_config.yaml
+cluster: 'python3 profile_slurm/slurm_submit.py {dependencies}'
