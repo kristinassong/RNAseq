@@ -19,7 +19,7 @@ READS = ["R1","R2"]
 
 include: "rules/trim.smk"
 include: "rules/fastqc.smk"
-#include: "rules/align.smk"
+include: "rules/align.smk"
 #include: "rules/quantification.smk"
 #include: "rules/diffexp.smk"
 
@@ -29,5 +29,5 @@ include: "rules/fastqc.smk"
 
 rule all:
     input:
-        expand("results/fastqc/{step}/{sample}_{read}_fastqc.html", sample=SAMPLES, read=READS, step=["pretrim","posttrim"]),
-        expand("results/fastqc/{step}/{sample}_{read}_fastqc.zip", sample=SAMPLES, read=READS, step=["pretrim","posttrim"])
+        fastqc = expand("results/fastqc/{step}/{sample}_{read}_fastqc.{ext}", sample=SAMPLES, read=READS, step=["pretrim","posttrim"], ext=["html","zip"]),
+        star = expand("results/star/{sample}/{sample}_Aligned.sortedByCoord.out.bam", sample=SAMPLES)

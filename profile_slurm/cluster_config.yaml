@@ -22,3 +22,11 @@ fastqc_posttrim_R1:
 
 fastqc_posttrim_R2:
   time: 30
+
+star_index:
+  mem: 128000M
+  cpus-per-task: 32
+
+star_align:
+  mem: 128000M
+  cpus-per-task: 32
