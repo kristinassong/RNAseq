@@ -5,39 +5,56 @@ rule build_transcriptome:
     output:
         config["path"]["transcriptome"]
     conda:
-        "workflow/envs/gffread.yaml"
+        "../envs/gffread.yaml"
     message:
-        "Build a transcriptome using gffread."
+        "Build a reference transcriptome using gffread."
     shell:
         "gffread {input.gtf} -g {input.genome} -w {output}"
 
 rule kallisto_index:
     input:
-        fasta = rules.build_transcriptome.output
+        rules.build_transcriptome.output
     output:
-        index = config["path"]["kallisto_index"]
+        "data/references/kallisto.idx"
+    params:
+        31
+    conda:
+        "../envs/kallisto.yaml"
     log:
         "results/logs/kallisto/index.log"
-    threads: 1
-    params: 
-        extra = "--kmer-size=31"
     message:
-        "Builds an index from {input.fasta}."
-    wrapper:
-        "v1.17.4/bio/kallisto/index"
+        "Builds an index from the FASTA file."
+    shell:
+        "kallisto index "
+        "--index={output} "
+        "--kmer-size={params} "
+        "{input} "
+        "&> {log}"
 
 rule kallisto_quant:
     input:
-        fastq = [rules.trimmomatic.output.r1, rules.trimmomatic.output.r2],
-        index = rules.kallisto_index.output.index,
+        idx = rules.kallisto_index.output,
+        fq1 = rules.trimmomatic.output.r1,
+        fq2 = rules.trimmomatic.output.r2
     output:
-        directory("results/kallisto/{sample}"),
-    log:
-        "results/logs/kallisto/{sample}.log",
-    threads: 1
+        "results/kallisto/{sample}/abundance.tsv"
     params:
-        extra = "--bias --bootstrap-samples=50"
+        bootstrap = "50",
+        outdir = "results/kallisto/{sample}"
+    threads:
+        1
+    conda:
+        "../envs/kallisto.yaml"
+    log:
+        "results/logs/kallisto/{sample}.log"
     message:
-        "Quantify abundance of {wildcards.sample} reads."
-    wrapper:
-        "v1.17.4/bio/kallisto/quant"
+        "Perform pseudoalignment and quantify transcript abundance for {wildcards.sample}."
+    shell:
+        "kallisto quant "
+        "--bias "
+        "--index={input.idx} "
+        "--output-dir={params.outdir} "
+        "--bootstrap-samples={params.bootstrap} "
+        "--threads={threads} "
+        "{input.fq1} {input.fq2} "
+        "&> {log}"

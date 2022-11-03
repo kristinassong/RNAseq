@@ -4,7 +4,6 @@ path:
   fastq: "data/samples/220923_NB502083_0194_AHVGMKBGXM/fastq"
   genome_fasta: "data/references/Homo_sapiens.GRCh38.dna.primary_assembly_V101.fa"
   genome_gtf: "data/references/hg38_Ensembl_V101_Scottlab_2020.gtf"
-  kallisto_index: "data/references/kallisto.idx"
   transcriptome: "data/references/transcriptome.fa"
 
 params:

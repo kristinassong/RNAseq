@@ -30,3 +30,20 @@ star_index:
 star_align:
   mem: 128000M
   cpus-per-task: 32
+
+primary_alignments:
+  mem: 4000M
+  time: 120
+  cpus-per-task: 1
+
+genomecov:
+  mem: 8000M
+  cpus-per-task: 1
+
+kallisto_index:
+  mem: 128000M
+  cpus-per-task: 32
+
+kallisto_quant:
+  mem: 128000M
+  cpus-per-task: 32

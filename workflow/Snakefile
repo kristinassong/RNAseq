@@ -1,9 +1,11 @@
 import os
+import pandas as pd
 
 __author__ = "Kristina Sungeun Song"
 __email__ = "kristina.song@usherbrooke.ca"
 
 configfile: "config/config.yaml"
+
 
 #############################
 ## Samples Information
@@ -12,6 +14,9 @@ configfile: "config/config.yaml"
 SAMPLES = config["samples"]
 READS = ["R1","R2"]
 
+df = pd.read_csv('data/comparisons.tsv', sep=' ')
+comparisons = [f'{cdn1}-{cdn2}' for cdn1, cdn2 in df.values]
+comparisons_full = [f'results/deseq2/{cdn1}-{cdn2}.csv' for cdn1, cdn2 in df.values]
 
 #############################
 ## Load rules
@@ -20,8 +25,9 @@ READS = ["R1","R2"]
 include: "rules/trim.smk"
 include: "rules/fastqc.smk"
 include: "rules/align.smk"
-#include: "rules/quantification.smk"
-#include: "rules/diffexp.smk"
+include: "rules/quantification.smk"
+include: "rules/diffexp.smk"
+
 
 #############################
 ## Target rules
@@ -30,4 +36,5 @@ include: "rules/align.smk"
 rule all:
     input:
         fastqc = expand("results/fastqc/{step}/{sample}_{read}_fastqc.{ext}", sample=SAMPLES, read=READS, step=["pretrim","posttrim"], ext=["html","zip"]),
-        star = expand("results/star/{sample}/{sample}_Aligned.sortedByCoord.out.bam", sample=SAMPLES)
+        bedgraphs = expand("results/genomecov/{sample}.bedgraph", sample=SAMPLES),
+        volcano_plot = expand("results/volcano_plot/{comp}.svg", comp=comparisons)

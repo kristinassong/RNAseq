@@ -50,28 +50,33 @@ rule star_align:
         "--outFileNamePrefix {params.out_prefix} "
         "{params.extra} "
         "&> {log}"
-"""
-rule genomecov:
+
+rule primary_alignments:
+    # More robust results with multimapped reads
     input:
         rules.star_align.output.aln
     output:
-        temp("results/genomecov/{sample}.temp.bedgraph")
+        "results/star/{sample}/{sample}_Aligned.sortedByCoord.out.primary.bam"
     log:
-        "results/logs/genomecov/{sample}.log"
-    params:
-        "-bg -split"
+        "results/logs/star/{sample}_primary.log"
+    conda:
+        "../envs/genomecov.yaml"
     message:
-        "Report {wildcards.sample} genome coverage in BEDGRAPH format."
-    wrapper:
-        "v1.17.4/bio/bedtools/genomecov"
+        "Keep primary alignments only for {wildcards.sample}."
+    shell:
+        "samtools view -b -F 256 -o {output} {input} "
+        "&> {log}"
 
-rule genomecov_sorted:
+rule genomecov:
     input:
-        rules.genomecov.output
+        rules.primary_alignments.output
     output:
         "results/genomecov/{sample}.bedgraph"
+    conda:
+        "../envs/genomecov.yaml"
     message:
-        "Sort {wildcards.sample} genome coverage bedgraph by chromosome and start position."
+        "Report {wildcards.sample} genome coverage in BEDGRAPH format."
+    # TmpScale counts the number of reads in the BAM and multiplies it by 1mio, rounded to 6 digits
     shell:
-        "sort -k1,1 -k2,2n {input} > {output}"
-"""
+        "TmpScale=$(bc <<< \"scale=6;1000000/$(samtools view -f 0 -c {input})\") && "
+        "bedtools genomecov -bg -split -ibam {input} -scale $TmpScale | sort -k1,1 -k2,2n > {output}"
