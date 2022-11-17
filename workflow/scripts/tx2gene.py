@@ -1,8 +1,15 @@
+#!/usr/bin/python3
+
+### Adapted from Danny Bergeron's code
+
 import pandas as pd
 import re
 
+gtf_file = snakemake.input.gtf
+out_file = snakemake.output.tsv
+
 def transcript2gene(gtf_file):
-    """ Creating a transcript -> gene dictionary """
+    # Creating a transcript -> gene dictionary
     tr_dict = dict()
     with open(str(gtf_file)) as f:
         for line in f:
@@ -14,6 +21,7 @@ def transcript2gene(gtf_file):
                     r'gene_id "(.*?)"[;,]', line
                 ).group(1)
                 gene_id = gene_id.split(',')[0]
+                
             if 'transcript_id' in line:
                 trans_id = re.search(
                     r'transcript_id "(.*?)"[;]', line
@@ -26,9 +34,6 @@ def transcript2gene(gtf_file):
             gene_id = ''
             trans_id = ''
     return tr_dict
-
-gtf_file = snakemake.input.gtf
-out_file = snakemake.output.tsv
 
 # Generate the dictionary
 _dict = transcript2gene(gtf_file)

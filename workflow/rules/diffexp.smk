@@ -1,3 +1,5 @@
+### Adapted from Danny Bergeron's code
+
 rule tx2gene:
     input:
         gtf = config["path"]["genome_gtf"]

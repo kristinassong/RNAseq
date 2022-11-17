@@ -8,7 +8,7 @@
 #SBATCH --mem=48000M
 #SBATCH --cpus-per-task=12
 
-### Modified from Gabrielle's script 
+### Modified from Gabrielle Deschamps-Francoeur's script 
 
 source /home/kris98/miniconda3/etc/profile.d/conda.sh &&
 conda activate snakemake &&

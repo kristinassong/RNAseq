@@ -1,4 +1,5 @@
 # https://bioconductor.org/packages/3.7/bioc/vignettes/tximport/inst/doc/tximport.html#use-with-downstream-bioconductor-dge-packages
+### Script written by Danny Bergeron
 
 #############################################################
 #----------------- Loading the librairies -------------------

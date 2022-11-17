@@ -1,4 +1,7 @@
 #!/usr/bin/python3
+
+### Script written by Danny Bergeron
+
 import pandas as pd
 import seaborn as sns
 import matplotlib.pyplot as plt
@@ -39,7 +42,7 @@ def volcano(df, x_col, y_col, hue_col, xlabel, ylabel, title, color_dict, path,
     """
     sns.set_theme()
     plt.rcParams['svg.fonttype'] = 'none'
-    plt.rcParams["legend.loc"] = 'center'
+    plt.rcParams["legend.loc"] = 'upper right'
 
     plt.suptitle(title, fontsize=25)
     sns.scatterplot(data=df, x=x_col, y=y_col, hue=hue_col,
@@ -55,6 +58,7 @@ def volcano(df, x_col, y_col, hue_col, xlabel, ylabel, title, color_dict, path,
     plt.yticks(fontsize=20)
     plt.xlabel(xlabel, fontsize=25)
     plt.ylabel(ylabel, fontsize=25)
+    plt.legend(fontsize="small")
     plt.savefig(path, bbox_inches='tight', dpi=600)
 
 # Create volcano
