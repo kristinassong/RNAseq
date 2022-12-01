@@ -58,3 +58,44 @@ rule kallisto_quant:
         "--threads={threads} "
         "{input.fq1} {input.fq2} "
         "&> {log}"
+
+rule tx2gene:
+    input:
+        gtf = config["path"]["genome_gtf"]
+    output:
+        tsv = "data/references/tx2gene.tsv"
+    conda:
+        "../envs/python.yaml"
+    message:
+        "Convert transcript IDs to gene IDs."
+    script:
+        "../scripts/tx2gene.py"
+
+rule merge_kallisto_quant:
+    input:
+        quant = expand(rules.kallisto_quant.output, sample=SAMPLES),
+        tx2gene = rules.tx2gene.output.tsv
+    output:
+        tpm = "results/kallisto/tpm.tsv"
+    conda:
+        "../envs/python.yaml"
+    log:
+        "results/logs/kallisto/merge_kallisto_quant.log"
+    message: 
+        "Merge kallisto quantification results into one dataframe for further analysis."
+    script:
+        "../scripts/merge_kallisto_quant.py"
+
+rule pca:
+    input:
+        tpm = rules.merge_kallisto_quant.output.tpm
+    output:
+        plot = "results/pca.svg"
+    conda:
+        "../envs/python_plots.yaml"
+    log:
+        "results/logs/pca.log"
+    message:
+        "Generate a PCA plot to observe variance between samples."
+    script:
+        "../scripts/pca.py"

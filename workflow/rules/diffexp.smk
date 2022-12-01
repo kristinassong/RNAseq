@@ -1,17 +1,5 @@
 ### Adapted from Danny Bergeron's code
 
-rule tx2gene:
-    input:
-        gtf = config["path"]["genome_gtf"]
-    output:
-        tsv = "data/references/tx2gene.tsv"
-    conda:
-        "../envs/python.yaml"
-    message:
-        "Convert transcript IDs to gene IDs."
-    script:
-        "../scripts/tx2gene.py"
-
 rule deseq2:
     input:
         quant = expand(rules.kallisto_quant.output, sample=SAMPLES),
@@ -43,7 +31,7 @@ rule volcano_plot:
     log:
         "results/logs/volcano_plot/{comp}.log"
     conda:
-        "../envs/volcano_plot.yaml"
+        "../envs/python_plots.yaml"
     message:
         "Create a volcano plot using deseq2 output for each comparison in comparisons.tsv."
     script:
