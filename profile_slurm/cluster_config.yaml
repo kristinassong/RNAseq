@@ -47,3 +47,6 @@ kallisto_index:
 kallisto_quant:
   mem: 128000M
   cpus-per-task: 32
+
+picard:
+  time: 30

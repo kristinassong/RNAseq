@@ -27,6 +27,7 @@ include: "rules/fastqc.smk"
 include: "rules/align.smk"
 include: "rules/quantification.smk"
 include: "rules/diffexp.smk"
+include: "rules/metrics.smk"
 
 
 #############################
@@ -38,4 +39,5 @@ rule all:
         fastqc = expand("results/fastqc/{step}/{sample}_{read}_fastqc.{ext}", sample=SAMPLES, read=READS, step=["pretrim","posttrim"], ext=["html","zip"]),
         bedgraphs = expand("results/genomecov/{sample}.bedgraph", sample=SAMPLES),
         volcano_plot = expand("results/volcano_plot/{comp}.svg", comp=comparisons),
-        pca_plot = "results/pca.svg"
+        pca_plot = "results/pca.svg",
+        picard_files = expand("results/picard/{sample}.isize.{ext}", sample=SAMPLES, ext=["txt","pdf"])
