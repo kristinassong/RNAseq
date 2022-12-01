@@ -41,5 +41,5 @@ def pca_plot(df, x_col, y_col, hue_col, xlabel, ylabel, title, path, **kwargs):
     plt.savefig(path, bbox_inches='tight', dpi=600)
 
 # Create PCA scatter plot
-pca_plot(principal_df, 'PC1', 'PC2', 'sample', f'PC1 ({var1}%)', f'PC2 ({var2}%)',
+pca_plot(principal_df, 'PC1', 'PC2', df.index, f'PC1 ({var1}%)', f'PC2 ({var2}%)',
         'PCA plot based on scaled TPM', snakemake.output.plot)

@@ -35,7 +35,7 @@ include: "rules/diffexp.smk"
 
 rule all:
     input:
-        #fastqc = expand("results/fastqc/{step}/{sample}_{read}_fastqc.{ext}", sample=SAMPLES, read=READS, step=["pretrim","posttrim"], ext=["html","zip"]),
-        #bedgraphs = expand("results/genomecov/{sample}.bedgraph", sample=SAMPLES),
-        #volcano_plot = expand("results/volcano_plot/{comp}.svg", comp=comparisons),
-        "results/pca.svg"
+        fastqc = expand("results/fastqc/{step}/{sample}_{read}_fastqc.{ext}", sample=SAMPLES, read=READS, step=["pretrim","posttrim"], ext=["html","zip"]),
+        bedgraphs = expand("results/genomecov/{sample}.bedgraph", sample=SAMPLES),
+        volcano_plot = expand("results/volcano_plot/{comp}.svg", comp=comparisons),
+        pca_plot = "results/pca.svg"
