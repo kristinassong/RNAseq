@@ -67,6 +67,21 @@ rule primary_alignments:
         "samtools view -b -F 256 -o {output} {input} "
         "&> {log}"
 
+rule bam_index:
+    input:
+        rules.primary_alignments.output
+    output:
+        "results/star/{sample}/{sample}_Aligned.sortedByCoord.out.primary.bam.bai"
+    log:
+        "results/logs/star/{sample}_primary_index.log"
+    conda:
+        "../envs/genomecov.yaml"
+    message:
+        "Create a BAI index for {wildcards.sample}."
+    shell:
+        "samtools index {input} "
+        "&> {log}"  
+
 rule genomecov:
     input:
         rules.primary_alignments.output

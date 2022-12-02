@@ -1,5 +1,7 @@
 #!/usr/bin/python3
 
+### Adapted from Étienne Fafard-Couture's PCA script
+
 import pandas as pd
 import seaborn as sns
 import matplotlib.pyplot as plt
@@ -8,9 +10,7 @@ from sklearn.decomposition import PCA
 from sklearn.preprocessing import StandardScaler
 import re
 
-tpm = snakemake.input.tpm
-
-df = pd.read_csv(tpm, sep='\t', index_col='gene')
+df = pd.read_csv(snakemake.input.tpm, sep='\t', index_col='gene')
 df = df.T
 
 # Standardize the values (remove mean and divide by stdev)
@@ -25,7 +25,7 @@ var1, var2 = round(pca.explained_variance_ratio_[0], 4) * 100, round(pca.explain
 # Create pca_plot function
 def pca_plot(df, x_col, y_col, hue_col, xlabel, ylabel, title, path, **kwargs):
     
-    #Creates a PCA (scatter) plot (using a x, y and hue column).
+    # Creates a PCA (scatter) plot (using a x, y and hue column).
     
     sns.set_theme()
     plt.rcParams['svg.fonttype'] = 'none'

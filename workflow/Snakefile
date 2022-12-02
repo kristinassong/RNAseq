@@ -18,16 +18,21 @@ df = pd.read_csv('data/comparisons.tsv', sep=' ')
 comparisons = [f'{cdn1}-{cdn2}' for cdn1, cdn2 in df.values]
 comparisons_full = [f'results/deseq2/{cdn1}-{cdn2}.csv' for cdn1, cdn2 in df.values]
 
+df_cond = pd.read_csv('data/design.tsv',sep='\t')
+conditions = df_cond.condition.unique().tolist()
+
 #############################
 ## Load rules
 #############################
 
+include: "rules/functions.smk"
 include: "rules/trim.smk"
 include: "rules/fastqc.smk"
 include: "rules/align.smk"
 include: "rules/quantification.smk"
 include: "rules/diffexp.smk"
 include: "rules/metrics.smk"
+include: "rules/splicing.smk"
 
 
 #############################
