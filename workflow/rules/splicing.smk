@@ -1,21 +1,10 @@
-rule gtf2gff3:
-    input:
-        config["path"]["genome_gtf"]
-    output:
-        "data/references/hg38_Ensembl_V101_Scottlab_2020.gff3"
-    conda:
-        "../envs/gffread.yaml"
-    message:
-        "Convert annotation format from gtf to gff3."
-    shell:
-        "gffread -E {input} -o- > {output}"
-
 rule majiq_build:
     input:
-        gff3 = rules.gtf2gff3.output,
+        gff3 = config["path"]["gff3"],
         bai = expand(rules.bam_index.output, sample=SAMPLES)
     output:
-        expand("results/majiq/build/{sample}_Aligned.sortedByCoord.out.primary.majiq", sample=SAMPLES)
+        log = "results/majiq/build/majiq.log",
+        splicegraph = "results/majiq/build/splicegraph.sql"
     params:
         config = "data/majiq.conf",
         outdir = directory("results/majiq/build"),
@@ -29,75 +18,77 @@ rule majiq_build:
         "source {params.majiq} && "
         "majiq build {input.gff3} -c {params.config} -j 8 -o {params.outdir} "
         "&> {log} && deactivate"
-"""
+
 rule majiq_psi_quant:
     input:
-        build_dir = rules.majiq_build.output,
-        majiq_files = get_majiq_files 
+        build_dir = rules.majiq_build.output.log
     output:
-        pickle = "results/majiq/psi_quant/{cond}.psi.pickle"
+        voila = "results/majiq/psi_quant/{cond}.psi.voila"
     params:
         outdir = directory("results/majiq/psi_quant"),
-        group = "--name {cond}"
-    conda:
-        "../envs/majiq_voila.yaml"
+        group = "--name {cond}",
+        majiq_files = get_majiq_files_psi,
+        majiq_tool = config["tools"]["majiq_voila"]
     log:
         "results/logs/majiq/psi_quant_{cond}.log"
     message:
-        "Quantify LSV candidates given by MAJIQ builder for {wildcards.cond} group."
+        "Quantify LSV candidates given by the MAJIQ builder for the {wildcards.cond} group."
     shell:
-        "majiq psi {input.majiq_files} --nthreads 8 --output {params.outdir} {params.group} "
-        "&> {log}"
+        "source {params.majiq_tool} && "
+        "majiq psi {params.majiq_files} -j 8 --output {params.outdir} {params.group} "
+        "&> {log} && deactivate"
 
-rule voila_psi:
+rule majiq_deltapsi_quant:
     input:
-        pickle = rules.majiq_psi_quant.output.pickle,
-        splicegraph = get_splicegraph_files
+        build_dir = rules.majiq_build.output.log
     output:
-        index = "results/voila/psi/{cond}/index.html"
+        voila = "results/majiq/deltapsi_quant/{comp}.deltapsi.voila"
     params:
-        directory("results/voila/psi/{cond}")
-    conda:
-        "../envs/majiq_voila.yaml"
+        outdir = directory("results/majiq/deltapsi_quant"),
+        group = majiq_deltapsi_name_format,
+        majiq_tool = config["tools"]["majiq_voila"],
+        grp1_majiq_files = majiq_cond1,
+        grp2_majiq_files = majiq_cond2
+    log:
+        "results/logs/majiq/deltapsi_quant_{comp}.log"
+    message:
+        "Quantify differential splicing between two different groups: {wildcards.comp}."
+    shell:
+        "source {params.majiq_tool} && "
+        "majiq deltapsi -grp1 {params.grp1_majiq_files} -grp2 {params.grp2_majiq_files} "
+        "-j 8 -o {params.outdir} --name {params.group} "
+        "&> {log} && deactivate"
+
+rule voila_tsv_psi:
+    input:
+        voila = rules.majiq_psi_quant.output.voila,
+        splicegraph = rules.majiq_build.output.splicegraph
+    output:
+        tsv = "results/voila/psi/{cond}.psi.tsv" 
+    params:
+        majiq_tool = config["tools"]["majiq_voila"]
     log:
         "results/logs/voila/psi_{cond}.log"
     message:
-        "Generate interactive summaries to display MAJIQ computations and quantifications for {wildcards.cond}."
+        "Generate VOILA tsv file for {wildcards.cond} PSI computation."
     shell:
-        "voila psi {input.pickle} --genes-files {input.splicegraph} -o {params} "
-        "&> {log}"
-
-rule deltapsi_quant:
+        "source {params.majiq_tool} && "
+        "voila tsv {input.splicegraph} {input.voila} -f {output.tsv} "
+        "&> {log} && deactivate"
+    
+rule voila_tsv_deltapsi:
     input:
-        build_dir = rules.majiq_build.output,
-        grp1_majiq_files = get_majiq_files,
-        grp2_majiq_files = get_majiq_files
+        splicegraph = rules.majiq_build.output.splicegraph,
+        voila = rules.majiq_deltapsi_quant.output.voila
     output:
-        pickle = "results/majiq/deltapsi_quant/{cond1}_{cond2}.deltapsi.pickle"
+        tsv = "results/voila/deltapsi/{comp}.deltapsi.tsv"
     params:
-        outdir = directory("results/majiq/deltapsi_quant"),
-        group = "--name {cond1} {cond2}"
-    conda:
-        "../envs/majiq_voila.yaml"
+        majiq_tool = config["tools"]["majiq_voila"]
     log:
-        "results/logs/majiq/deltapsi_quant_{cond1}_{cond2}.log"
+        "results/logs/voila/deltapsi_{comp}.log"
     message:
-        "Quantify differential splicing between two different groups: {wildcards.cond1} and {wildcards.cond2}."
+        "Generate VOILA tsv file for {wildcards.comp} delta PSI computation."
     shell:
-        "majiq deltapsi -grp1 {input.grp1_majiq_files} -grp2 {input.grp2_majiq_files} "
-        "-j 8 -o {params.outdir} {params.group} "
-        "&> {log}"
-
-rule voila_deltapsi:
-    input:
-    output:
-    conda:
-        "../envs/majiq_voila.yaml"
-    log:
-        "results/logs/voila"
-    message:
-        "Generate interactive summaries to display MAJIQ computations and quantifications."
-    shell:
-        "voila deltapsi {output} --genes-files -o "
-        "&> {log}"
-"""
+        "source {params.majiq_tool} && "
+        "voila tsv {input.splicegraph} {input.voila} -f {output.tsv} "
+        "&> {log} && deactivate"

@@ -52,6 +52,5 @@ picard:
   time: 30
 
 majiq_build:
-  time: 1440
   mem: 128000M
   cpus-per-task: 32

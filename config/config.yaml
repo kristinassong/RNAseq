@@ -5,6 +5,7 @@ path:
   genome_fasta: "data/references/Homo_sapiens.GRCh38.dna.primary_assembly_V101.fa"
   genome_gtf: "data/references/hg38_Ensembl_V101_Scottlab_2020.gtf"
   transcriptome: "data/references/transcriptome.fa"
+  gff3: "data/references/hg38_Ensembl_V101_Scottlab_2020.gff3"
 
 params:
   trimmomatic: "ILLUMINACLIP:data/Adapters-PE_NextSeq.fa:2:12:10:8:true TRAILING:30 LEADING:30 MINLEN:3"

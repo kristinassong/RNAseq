@@ -10,7 +10,7 @@ cd htslib-1.9
 make
 make install
 $ export HTSLIB_LIBRARY_DIR=/home/kris98/scratch/RNAseq/workflow/envs/htslib-1.9/htslib/lib
-$ export HTSLIB_LIBRARY_DIR=/home/kris98/scratch/RNAseq/workflow/envs/htslib-1.9/htslib/include
+$ export HTSLIB_INCLUDE_DIR=/home/kris98/scratch/RNAseq/workflow/envs/htslib-1.9/htslib/include
 ```
 
 ### Install MAJIQ using venv
