@@ -9,68 +9,84 @@ rule gtf2gff3:
         "Convert annotation format from gtf to gff3."
     shell:
         "gffread -E {input} -o- > {output}"
-    
+
 rule majiq_build:
     input:
         gff3 = rules.gtf2gff3.output,
-        bam = expand(rules.primary_alignments.output, sample=SAMPLES),
         bai = expand(rules.bam_index.output, sample=SAMPLES)
     output:
-        directory("results/majiq/build")
+        expand("results/majiq/build/{sample}_Aligned.sortedByCoord.out.primary.majiq", sample=SAMPLES)
     params:
-        "data/majiq.conf"
-    conda:
-        "../envs/majiq_voila.yaml"
+        config = "data/majiq.conf",
+        outdir = directory("results/majiq/build"),
+        majiq = config["tools"]["majiq_voila"]
     log:
         "results/logs/majiq/build.log"
     message:
-        "Analyze RNA-seq data to detect LSV candidates."
+        "Analyze RNA-seq data to detect LSV candidates using MAJIQ. "
+        "Preinstallation of MAJIQ is required prior to running this rule."
     shell:
-        "majiq build {input.gff3} -c {params} -j 8 -o {output} "
-        "&> {log}"
-
+        "source {params.majiq} && "
+        "majiq build {input.gff3} -c {params.config} -j 8 -o {params.outdir} "
+        "&> {log} && deactivate"
+"""
 rule majiq_psi_quant:
     input:
-        rules.majiq_build.output,
-        get_majiq_psi_quant_inputs   
+        build_dir = rules.majiq_build.output,
+        majiq_files = get_majiq_files 
     output:
-        expand("results/majiq/psi_quant/{cond}.psi.pickle",cond=condition)
+        pickle = "results/majiq/psi_quant/{cond}.psi.pickle"
     params:
-        directory("results/majiq/psi_quant")
+        outdir = directory("results/majiq/psi_quant"),
+        group = "--name {cond}"
     conda:
         "../envs/majiq_voila.yaml"
     log:
-        "results/logs/majiq/"
+        "results/logs/majiq/psi_quant_{cond}.log"
     message:
-        "Quantify LSV candidates given by MAJIQ builder."
+        "Quantify LSV candidates given by MAJIQ builder for {wildcards.cond} group."
     shell:
-        "majiq psi {input} --nthreads 8 --output {params} --name"
+        "majiq psi {input.majiq_files} --nthreads 8 --output {params.outdir} {params.group} "
         "&> {log}"
 
 rule voila_psi:
     input:
+        pickle = rules.majiq_psi_quant.output.pickle,
+        splicegraph = get_splicegraph_files
     output:
+        index = "results/voila/psi/{cond}/index.html"
+    params:
+        directory("results/voila/psi/{cond}")
     conda:
         "../envs/majiq_voila.yaml"
     log:
-        "results/logs/voila"
+        "results/logs/voila/psi_{cond}.log"
     message:
-        "Generate interactive summaries to display MAJIQ computations and quantifications."
+        "Generate interactive summaries to display MAJIQ computations and quantifications for {wildcards.cond}."
     shell:
-        "voila psi {output} --genes-files -o "
+        "voila psi {input.pickle} --genes-files {input.splicegraph} -o {params} "
         "&> {log}"
 
 rule deltapsi_quant:
     input:
+        build_dir = rules.majiq_build.output,
+        grp1_majiq_files = get_majiq_files,
+        grp2_majiq_files = get_majiq_files
     output:
+        pickle = "results/majiq/deltapsi_quant/{cond1}_{cond2}.deltapsi.pickle"
+    params:
+        outdir = directory("results/majiq/deltapsi_quant"),
+        group = "--name {cond1} {cond2}"
     conda:
         "../envs/majiq_voila.yaml"
     log:
-        "results/logs/majiq/"
+        "results/logs/majiq/deltapsi_quant_{cond1}_{cond2}.log"
     message:
-        "Quantify differential splicing between two different groups."
+        "Quantify differential splicing between two different groups: {wildcards.cond1} and {wildcards.cond2}."
     shell:
-        "majiq deltapsi -grp1 -grp2 -j 8 -o {output} -n "
+        "majiq deltapsi -grp1 {input.grp1_majiq_files} -grp2 {input.grp2_majiq_files} "
+        "-j 8 -o {params.outdir} {params.group} "
+        "&> {log}"
 
 rule voila_deltapsi:
     input:
@@ -84,3 +100,4 @@ rule voila_deltapsi:
     shell:
         "voila deltapsi {output} --genes-files -o "
         "&> {log}"
+"""

@@ -18,8 +18,8 @@ df = pd.read_csv('data/comparisons.tsv', sep=' ')
 comparisons = [f'{cdn1}-{cdn2}' for cdn1, cdn2 in df.values]
 comparisons_full = [f'results/deseq2/{cdn1}-{cdn2}.csv' for cdn1, cdn2 in df.values]
 
-df_cond = pd.read_csv('data/design.tsv',sep='\t')
-conditions = df_cond.condition.unique().tolist()
+#df_cond = pd.read_csv('data/design.tsv',sep='\t')
+#conditions = df_cond.condition.unique().tolist()
 
 #############################
 ## Load rules
@@ -45,4 +45,5 @@ rule all:
         bedgraphs = expand("results/genomecov/{sample}.bedgraph", sample=SAMPLES),
         volcano_plot = expand("results/volcano_plot/{comp}.svg", comp=comparisons),
         pca_plot = "results/pca.svg",
-        picard_files = expand("results/picard/{sample}.isize.{ext}", sample=SAMPLES, ext=["txt","pdf"])
+        picard_files = expand("results/picard/{sample}.isize.{ext}", sample=SAMPLES, ext=["txt","pdf"]),
+        majiq = expand("results/majiq/build/{sample}_Aligned.sortedByCoord.out.primary.majiq", sample=SAMPLES)

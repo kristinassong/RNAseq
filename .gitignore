@@ -3,3 +3,8 @@ results/
 
 .DS_Store
 .snakemake/
+
+# MAJIQ and VOILA requirements
+workflow/envs/htslib-1.9.tar.bz2
+workflow/envs/htslib-1.9/
+workflow/envs/majiq_voila/
