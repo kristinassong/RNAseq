@@ -1,4 +1,4 @@
-samples: ["NC5_n1_S1","NC5_n2_S6","22_1_n1_S2","22_1_n2_S7","22_2_n1_S3","22_2_n2_S8","48_1_n1_S4","48_2_n1_S5"]
+samples: ["NC5_n1_S1","NC5_n2_S6","22_1_n1_S2","22_2_n1_S3","22_1_n2_S7","22_2_n2_S8"]
 
 path:
   fastq: "data/samples/220923_NB502083_0194_AHVGMKBGXM/fastq"

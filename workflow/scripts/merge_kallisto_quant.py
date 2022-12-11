@@ -8,6 +8,7 @@ outfile = snakemake.output.tpm
 
 final_df = pd.DataFrame()
 cycle = 1
+sample_list = []
 
 for q in snakemake.input.quant:
 
@@ -26,6 +27,7 @@ for q in snakemake.input.quant:
     else:
         final_df = pd.merge(final_df, data, left_index=True, right_index=True)
     
+    sample_list += [sample]
     cycle+=1
 
 # transcript ID --> gene ID
@@ -35,5 +37,9 @@ ids.set_index('transcript', inplace=True)
 final_df = pd.merge(final_df, ids, left_index=True, right_index=True)
 final_df.set_index('gene', inplace=True)
 
+# Filter genes by TPM
+# TPM >=1 in at least one sample
+filtered = final_df[~((final_df[sample_list]<1).all(axis=1))]
+
 # Write to file
-final_df.to_csv(outfile, sep='\t')
+filtered.to_csv(outfile, sep='\t')

@@ -90,7 +90,9 @@ rule pca:
     input:
         tpm = rules.merge_kallisto_quant.output.tpm
     output:
-        plot = "results/pca.svg"
+        plot = "results/pca.png"
+    params:
+        design = 'data/design.tsv'
     conda:
         "../envs/python_plots.yaml"
     log:

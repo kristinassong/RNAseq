@@ -51,6 +51,9 @@ kallisto_quant:
 picard:
   time: 30
 
+pca:
+  time: 30
+
 majiq_build:
   mem: 128000M
   cpus-per-task: 32

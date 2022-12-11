@@ -18,7 +18,7 @@ df = pd.read_csv('data/comparisons.tsv', sep=' ')
 comparisons = [f'{cdn1}-{cdn2}' for cdn1, cdn2 in df.values]
 comparisons_full = [f'results/deseq2/{cdn1}-{cdn2}.csv' for cdn1, cdn2 in df.values]
 
-df_cond = pd.read_csv('data/design.tsv',delim_whitespace=True)
+df_cond = pd.read_csv('data/design.tsv',delim_whitespace=True,usecols=['sample','condition'])
 conditions = df_cond['condition'].unique().tolist()
 
 #############################
@@ -43,8 +43,4 @@ rule all:
     input:
         fastqc = expand("results/fastqc/{step}/{sample}_{read}_fastqc.{ext}", sample=SAMPLES, read=READS, step=["pretrim","posttrim"], ext=["html","zip"]),
         bedgraphs = expand("results/genomecov/{sample}.bedgraph", sample=SAMPLES),
-        volcano_plot = expand("results/volcano_plot/{comp}.svg", comp=comparisons),
-        pca_plot = "results/pca.svg",
-        picard_files = expand("results/picard/{sample}.isize.{ext}", sample=SAMPLES, ext=["txt","pdf"]),
-        voila_psi = expand("results/voila/psi/{cond}.psi.tsv", cond=conditions),
-        voila_deltapsi = expand("results/voila/deltapsi/{comp}.deltapsi.tsv", comp=comparisons)
+        pca_plot = "results/pca.png"
