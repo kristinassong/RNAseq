@@ -1,9 +1,11 @@
 #!/usr/bin/python3
 
 import pandas as pd
+from gtfparse import read_gtf
 import os
 
 tx2gene = snakemake.input.tx2gene
+gtf = snakemake.input.gtf
 outfile = snakemake.output.tpm
 
 final_df = pd.DataFrame()
@@ -41,5 +43,10 @@ final_df.set_index('gene', inplace=True)
 # TPM >=1 in at least one sample
 filtered = final_df[~((final_df[sample_list]<1).all(axis=1))]
 
+# Filter genes by biotype
+# only keep protein coding genes
+df_gtf = read_gtf(gtf)
+filtered_pc = filtered[filtered.gene.isin(df_gtf.gene_id)]
+
 # Write to file
-filtered.to_csv(outfile, sep='\t')
+filtered_pc.to_csv(outfile, sep='\t')
