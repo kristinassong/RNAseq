@@ -46,7 +46,7 @@ filtered = final_df[~((final_df[sample_list]<1).all(axis=1))]
 # Filter genes by biotype
 # only keep protein coding genes
 df_gtf = read_gtf(gtf)
-filtered_pc = filtered[filtered.gene.isin(df_gtf.gene_id)]
+filtered_pc = filtered[filtered.index.isin(df_gtf.gene_id)]
 
 # Write to file
 filtered_pc.to_csv(outfile, sep='\t')

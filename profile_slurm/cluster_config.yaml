@@ -66,3 +66,6 @@ tsv_psi_filtered:
 
 tsv_deltapsi_filtered:
   time: 30
+
+merge_kallisto_quant:
+  time: 30

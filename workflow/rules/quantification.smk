@@ -73,9 +73,9 @@ rule tx2gene:
 
 rule filter_gtf_pc_genes:
     input:
-        config['path']['genome_gtf']
+        gtf = config['path']['genome_gtf']
     output:
-        "data/references/hg38_Ensembl_V101_Scottlab_2020.protein_coding.gtf"
+        pc_gtf = "data/references/hg38_Ensembl_V101_Scottlab_2020.protein_coding.gtf"
     log:
         "results/logs/kallisto/filter_gtf_pc_genes.log"
     message:
@@ -87,7 +87,7 @@ rule merge_kallisto_quant:
     input:
         quant = expand(rules.kallisto_quant.output, sample=SAMPLES),
         tx2gene = rules.tx2gene.output.tsv,
-        gtf = rules.filter_gtf_pc_genes.output
+        gtf = rules.filter_gtf_pc_genes.output.pc_gtf
     output:
         tpm = "results/kallisto/tpm.tsv"
     conda:
