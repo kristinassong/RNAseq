@@ -90,7 +90,7 @@ rule pca:
     input:
         tpm = rules.merge_kallisto_quant.output.tpm
     output:
-        plot = "results/pca.png"
+        plot = "results/pca.svg"
     params:
         design = 'data/design.tsv'
     conda:
@@ -101,3 +101,23 @@ rule pca:
         "Generate a PCA plot to observe variance between samples."
     script:
         "../scripts/pca.py"
+
+rule multiqc:
+    input:
+        star = expand(rules.primary_alignments.output, sample=SAMPLES),
+        tpm = rules.merge_kallisto_quant.output.tpm
+    output:
+        html = "results/multiqc/multiqc_report.html"
+    params:
+        scan_dir = "results/fastqc results/star/*/*Log.final.out results/kallisto",
+        outdir = directory('results/multiqc')
+    log:
+        "results/logs/multiqc.log"
+    message:
+        "Summarize analysis results for multiple tools and samples in a single report."
+    conda:
+        "../envs/fastqc.yaml"
+    shell:
+        "multiqc {params.scan_dir} "
+        "--outdir {params.outdir} "
+        "&> {log}"

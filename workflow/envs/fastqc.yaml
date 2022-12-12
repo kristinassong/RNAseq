@@ -1,5 +1,8 @@
 channels:
   - default
   - bioconda
+  - conda-forge
 dependencies:
   - fastqc=0.11.8
+  - lzstring=1.0.4
+  - multiqc=1.13

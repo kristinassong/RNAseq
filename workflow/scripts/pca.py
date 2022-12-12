@@ -61,16 +61,17 @@ def pca_plot(df, x_col, y_col, hue_col, xlabel, ylabel, title, path, **kwargs):
     
     sns.set_theme()
     plt.rcParams['svg.fonttype'] = 'none'
+    plt.rcParams["legend.loc"] = 'upper right'
 
-    plt.suptitle(title, fontsize=20)
-    ax = sns.scatterplot(data=df, x=x_col, y=y_col, hue=hue_col, palette=color_palette(df[hue_col]), edgecolor='face',
+    plt.suptitle(title, fontsize=25)
+    sns.scatterplot(data=df, x=x_col, y=y_col, hue=hue_col, palette=color_palette(df[hue_col]), edgecolor='face',
                     alpha=0.7, s=50, **kwargs)
 
-    plt.xticks(fontsize=16)
-    plt.yticks(fontsize=16)
-    plt.xlabel(xlabel, fontsize=18)
-    plt.ylabel(ylabel, fontsize=18)
-    ax.legend(fontsize='small', loc='upper right')
+    plt.xticks(fontsize=20)
+    plt.yticks(fontsize=20)
+    plt.xlabel(xlabel, fontsize=25)
+    plt.ylabel(ylabel, fontsize=25)
+    plt.legend(fontsize='medium')
 
     plt.savefig(path, bbox_inches='tight', dpi=600)
 

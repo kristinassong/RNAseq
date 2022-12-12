@@ -23,7 +23,8 @@ rule deseq2:
 rule volcano_plot:
     input:
         DE_outdir = rules.deseq2.output.results,
-        DE_output = "results/deseq2/{comp}.csv"
+        DE_output = "results/deseq2/{comp}.csv",
+        filtered_genes = rules.merge_kallisto_quant.output.tpm
     output:
         volcano = "results/volcano_plot/{comp}.svg"
     params:

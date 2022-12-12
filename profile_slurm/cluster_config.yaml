@@ -57,3 +57,12 @@ pca:
 majiq_build:
   mem: 128000M
   cpus-per-task: 32
+
+volcano_plot:
+  time: 30
+
+tsv_psi_filtered:
+  time: 30
+
+tsv_deltapsi_filtered:
+  time: 30

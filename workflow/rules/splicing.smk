@@ -92,3 +92,29 @@ rule voila_tsv_deltapsi:
         "source {params.majiq_tool} && "
         "voila tsv {input.splicegraph} {input.voila} -f {output.tsv} "
         "&> {log} && deactivate"
+
+rule tsv_psi_filtered:
+    input:
+        tsv = rules.voila_tsv_psi.output.tsv,
+        exp_genes = rules.merge_kallisto_quant.output.tpm
+    output:
+        filtered_tsv = "results/voila/psi/{cond}.psi.filtered.tsv" 
+    log:
+        "results/logs/voila/psi_{cond}_filtered.log"
+    message:
+        "Keep VOILA psi results only for the genes that are expressed."
+    script:
+        "../scripts/voila_filter.py"
+
+rule tsv_deltapsi_filtered:
+    input:
+        tsv = rules.voila_tsv_deltapsi.output.tsv,
+        exp_genes = rules.merge_kallisto_quant.output.tpm
+    output:
+        filtered_tsv = "results/voila/deltapsi/{comp}.deltapsi.filtered.tsv" 
+    log:
+        "results/logs/voila/deltapsi_{comp}_filtered.log"
+    message:
+        "Keep VOILA deltapsi results only for the genes that are expressed."
+    script:
+        "../scripts/voila_filter.py"
