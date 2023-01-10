@@ -103,7 +103,8 @@ rule pca:
     input:
         tpm = rules.merge_kallisto_quant.output.tpm
     output:
-        plot = "results/pca.svg"
+        plot = "results/pca/pca.svg",
+        tsv = "results/pca/pca.tsv"
     params:
         design = 'data/design.tsv'
     conda:
@@ -122,7 +123,7 @@ rule multiqc:
     output:
         html = "results/multiqc/multiqc_report.html"
     params:
-        scan_dir = "results/fastqc results/star/*/*Log.final.out results/kallisto",
+        scan_dir = "results/fastqc results/star/*/*Log.final.out results/kallisto results/picard results/logs/trimmomatic",
         outdir = directory('results/multiqc')
     log:
         "results/logs/multiqc.log"
