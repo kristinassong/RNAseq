@@ -9,6 +9,7 @@ from gprofiler import GProfiler
 genes = list(pd.read_csv(snakemake.input.genes, sep='\t')['gene'])
 
 # Run gprofiler for enrichment analysis of functional (GO and other) terms
+### NEED INTERNET CONNECTION!
 gp = GProfiler(return_dataframe=True)
 go_results = gp.profile(organism='hsapiens', query=genes)
 
