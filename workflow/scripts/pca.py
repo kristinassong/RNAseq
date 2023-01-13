@@ -46,10 +46,10 @@ def color_palette(labels):
     for l in labels:
         if 'NC' in l and 'dimgray' not in palette:
             palette.append('dimgray')
-        elif 'ASO1' in l and 'blue' not in palette:
-            palette.append('blue')
-        elif 'ASO2' in l and 'royalblue' not in palette:
-            palette.append('royalblue')
+        elif 'ASO1' in l and 'seagreen' not in palette: # blue, seagreen
+            palette.append('seagreen')
+        elif 'ASO2' in l and 'mediumseagreen' not in palette: # royalblue, mediumseagreen
+            palette.append('mediumseagreen')
         else:
             continue
     return palette
@@ -59,22 +59,25 @@ def pca_plot(df, x_col, y_col, hue_col, xlabel, ylabel, title, path, **kwargs):
     
     # Creates a PCA (scatter) plot (using a x, y and hue column).
     
-    sns.set_theme()
+    #sns.set_theme()
+    plt.figure(figsize=(5.5,4))
     plt.rcParams['svg.fonttype'] = 'none'
     plt.rcParams["legend.loc"] = 'upper right'
 
-    plt.suptitle(title, fontsize=25)
+    plt.suptitle(title, fontsize=16)
     sns.scatterplot(data=df, x=x_col, y=y_col, hue=hue_col, palette=color_palette(df[hue_col]), edgecolor='face',
                     alpha=0.7, s=50, **kwargs)
 
-    plt.xticks(fontsize=20)
-    plt.yticks(fontsize=20)
-    plt.xlabel(xlabel, fontsize=25)
-    plt.ylabel(ylabel, fontsize=25)
+    plt.xticks(fontsize=14)
+    plt.yticks(fontsize=14)
+    plt.xlabel(xlabel, fontsize=14)
+    plt.ylabel(ylabel, fontsize=14)
     plt.legend(fontsize='medium')
 
     plt.savefig(path, bbox_inches='tight', dpi=600)
 
 # Create PCA scatter plot
-pca_plot(principal_df, 'PC1', 'PC2', 'label', f'PC1 ({var1}%)', f'PC2 ({var2}%)',
+pca_plot(principal_df, 'PC1', 'PC2', 'label', f'PC1 ({var1:.2f}%)', f'PC2 ({var2:.2f}%)',
         'PCA plot based on scaled TPM', snakemake.output.plot)
+
+principal_df.to_csv(snakemake.output.tsv, sep='\t', index=False)

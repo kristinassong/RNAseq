@@ -39,13 +39,23 @@ include: "rules/splicing.smk"
 ## Target rules
 #############################
 
+#voila_psi = expand("results/voila/psi/{cond}.psi.filtered.tsv", cond=conditions),
+#voila_deltapsi = expand("results/voila/deltapsi/{comp}.deltapsi.filtered.tsv", comp=comparisons)
+
+
+#### COMPLETE
+#multiqc = "results/multiqc/multiqc_report.html"
+#pca_plot = "results/pca/pca.svg"
+#volcano_plot = expand("results/volcano_plot/{comp}.svg", comp=comparisons)
+#sig_diffexp_genes = expand("results/volcano_plot/{comp}_sig_diffexp_genes_{change}.tsv", comp=comparisons, change=['up','down'])
+
+#### NEED INTERNET CONNECTION
+#GO_bar_charts = expand("results/GO/GO_{comp}_{change}regulated_genes.svg", comp=comparisons, change=['up','down'])
+
 rule all:
     input:
         fastqc = expand("results/fastqc/{step}/{sample}_{read}_fastqc.{ext}", sample=SAMPLES, read=READS, step=["pretrim","posttrim"], ext=["html","zip"]),
         bedgraphs = expand("results/genomecov/{sample}.bedgraph", sample=SAMPLES),
         picard_files = expand("results/picard/{sample}.isize.{ext}", sample=SAMPLES, ext=["txt","pdf"]),
-        pca_plot = "results/pca.svg",
         volcano_plot = expand("results/volcano_plot/{comp}.svg", comp=comparisons),
-        voila_psi = expand("results/voila/psi/{cond}.psi.filtered.tsv", cond=conditions),
-        voila_deltapsi = expand("results/voila/deltapsi/{comp}.deltapsi.filtered.tsv", comp=comparisons),
-        multiqc = "results/multiqc/multiqc_report.html"
+        sig_diffexp_genes = expand("results/volcano_plot/{comp}_sig_diffexp_genes_{change}.tsv", comp=comparisons, change=['up','down'])

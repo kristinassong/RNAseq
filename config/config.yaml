@@ -1,7 +1,9 @@
-samples: ["NC5_n1_S1","NC5_n2_S6","22_1_n1_S2","22_2_n1_S3","22_1_n2_S7","22_2_n2_S8"]
+#samples: ["NC5_n1_S1","NC5_n2_S6","NC5_n3_S1","22_1_n1_S2","22_2_n1_S3","22_1_n2_S7","22_2_n2_S8","48_1_n1_S4","48_2_n1_S5","48_1_n3_S2","48_2_n3_S3"]
+#samples: ["NC5_n2_S6","NC5_n3_S1","22_1_n1_S2","22_2_n1_S3","22_1_n2_S7","22_2_n2_S8"]
+samples: ["NC5_n2_S6","NC5_n3_S1","48_1_n1_S4","48_2_n1_S5","48_1_n3_S2","48_2_n3_S3"]
 
 path:
-  fastq: "data/samples/220923_NB502083_0194_AHVGMKBGXM/fastq"
+  fastq: "data/samples"
   genome_fasta: "data/references/Homo_sapiens.GRCh38.dna.primary_assembly_V101.fa"
   genome_gtf: "data/references/hg38_Ensembl_V101_Scottlab_2020.gtf"
   transcriptome: "data/references/transcriptome.fa"

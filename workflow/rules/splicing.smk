@@ -3,8 +3,8 @@ rule majiq_build:
         gff3 = config["path"]["gff3"],
         bai = expand(rules.bam_index.output, sample=SAMPLES)
     output:
-        log = "results/majiq/build/majiq.log",
-        splicegraph = "results/majiq/build/splicegraph.sql"
+        splicegraph = "results/majiq/build/splicegraph.sql",
+        majiq_files = expand('results/majiq/build/{sample}_Aligned.sortedByCoord.out.primary.majiq',sample=SAMPLES)
     params:
         config = "data/majiq.conf",
         outdir = directory("results/majiq/build"),
@@ -21,7 +21,7 @@ rule majiq_build:
 
 rule majiq_psi_quant:
     input:
-        build_dir = rules.majiq_build.output.log
+        build_dir = rules.majiq_build.output.majiq_files
     output:
         voila = "results/majiq/psi_quant/{cond}.psi.voila"
     params:
@@ -40,7 +40,7 @@ rule majiq_psi_quant:
 
 rule majiq_deltapsi_quant:
     input:
-        build_dir = rules.majiq_build.output.log
+        build_dir = rules.majiq_build.output.majiq_files
     output:
         voila = "results/majiq/deltapsi_quant/{comp}.deltapsi.voila"
     params:
