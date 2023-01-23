@@ -19,25 +19,6 @@ rule majiq_build:
         "majiq build {input.gff3} -c {params.config} -j 8 -o {params.outdir} "
         "&> {log} && deactivate"
 
-rule majiq_psi_quant:
-    input:
-        build_dir = rules.majiq_build.output.majiq_files
-    output:
-        voila = "results/majiq/psi_quant/{cond}.psi.voila"
-    params:
-        outdir = directory("results/majiq/psi_quant"),
-        group = "--name {cond}",
-        majiq_files = get_majiq_files_psi,
-        majiq_tool = config["tools"]["majiq_voila"]
-    log:
-        "results/logs/majiq/psi_quant_{cond}.log"
-    message:
-        "Quantify LSV candidates given by the MAJIQ builder for the {wildcards.cond} group."
-    shell:
-        "source {params.majiq_tool} && "
-        "majiq psi {params.majiq_files} -j 8 --output {params.outdir} {params.group} "
-        "&> {log} && deactivate"
-
 rule majiq_deltapsi_quant:
     input:
         build_dir = rules.majiq_build.output.majiq_files
@@ -59,62 +40,37 @@ rule majiq_deltapsi_quant:
         "-j 8 -o {params.outdir} --name {params.group} "
         "&> {log} && deactivate"
 
-rule voila_tsv_psi:
-    input:
-        voila = rules.majiq_psi_quant.output.voila,
-        splicegraph = rules.majiq_build.output.splicegraph
-    output:
-        tsv = "results/voila/psi/{cond}.psi.tsv" 
-    params:
-        majiq_tool = config["tools"]["majiq_voila"]
-    log:
-        "results/logs/voila/psi_{cond}.log"
-    message:
-        "Generate VOILA tsv file for {wildcards.cond} PSI computation."
-    shell:
-        "source {params.majiq_tool} && "
-        "voila tsv {input.splicegraph} {input.voila} -f {output.tsv} "
-        "&> {log} && deactivate"
-    
-rule voila_tsv_deltapsi:
+rule voila_deltapsi_categorize_events:
     input:
         splicegraph = rules.majiq_build.output.splicegraph,
         voila = rules.majiq_deltapsi_quant.output.voila
     output:
-        tsv = "results/voila/deltapsi/{comp}.deltapsi.tsv"
+        summary = "results/voila/deltapsi/event_types/{comp}/raw/summary.tsv"
     params:
+        outdir = directory("results/voila/deltapsi/event_types/{comp}/raw"),
         majiq_tool = config["tools"]["majiq_voila"]
     log:
-        "results/logs/voila/deltapsi_{comp}.log"
+        "results/logs/voila/deltapsi_event_types_{comp}_raw.log"
     message:
-        "Generate VOILA tsv file for {wildcards.comp} delta PSI computation."
+        "Categorize splicing events within modules using VOILA for {wildcards.comp}."
     shell:
         "source {params.majiq_tool} && "
-        "voila tsv {input.splicegraph} {input.voila} -f {output.tsv} "
+        "voila modulize {input.splicegraph} {input.voila} "
+        "-d {params.outdir} -j 8 --overwrite "
         "&> {log} && deactivate"
 
-rule tsv_psi_filtered:
+rule filter_genes:
     input:
-        tsv = rules.voila_tsv_psi.output.tsv,
+        summary = rules.voila_deltapsi_categorize_events.output.summary,
         exp_genes = rules.merge_kallisto_quant.output.tpm
+    params:
+        indir = directory("results/voila/deltapsi/event_types/{comp}/raw"),
+        outdir = directory("results/voila/deltapsi/event_types/{comp}/filtered")
     output:
-        filtered_tsv = "results/voila/psi/{cond}.psi.filtered.tsv" 
+        filtered_tsv = "results/voila/deltapsi/event_types/{comp}/filtered/summary.tsv"
     log:
-        "results/logs/voila/psi_{cond}_filtered.log"
+        "results/logs/voila/deltapsi_{comp}_event_types_filtered.log"
     message:
-        "Keep VOILA psi results only for the genes that are expressed."
-    script:
-        "../scripts/voila_filter.py"
-
-rule tsv_deltapsi_filtered:
-    input:
-        tsv = rules.voila_tsv_deltapsi.output.tsv,
-        exp_genes = rules.merge_kallisto_quant.output.tpm
-    output:
-        filtered_tsv = "results/voila/deltapsi/{comp}.deltapsi.filtered.tsv" 
-    log:
-        "results/logs/voila/deltapsi_{comp}_filtered.log"
-    message:
-        "Keep VOILA deltapsi results only for the genes that are expressed."
+        "Keep VOILA events only for the genes that are expressed."
     script:
         "../scripts/voila_filter.py"

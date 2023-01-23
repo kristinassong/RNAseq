@@ -3,18 +3,22 @@
 import pandas as pd
 import os
 
-voila_file = snakemake.input.tsv
-voila_df = pd.DataFrame()
-if 'deltapsi' in voila_file:
-    voila_df = pd.read_csv(snakemake.input.tsv, header=10, sep='\t')
-else:
-    voila_df = pd.read_csv(snakemake.input.tsv, header=7, sep='\t')
+raw_dir = snakemake.params.indir
+out_dir = snakemake.params.outdir
 
-genes = pd.read_csv(snakemake.input.exp_genes, sep='\t', usecols=['gene'])
-outfile = snakemake.output.filtered_tsv
+for filename in os.listdir(raw_dir):
+    f = os.path.join(raw_dir, filename)
+    # checking if it is a file
+    if os.path.isfile(f):
 
-# Drop genes that are not in the TPM filtered list
-voila_filtered = voila_df[voila_df.gene_id.isin(genes.gene)] 
+        voila_df = pd.read_csv(f, sep='\t', comment='#')
 
-# Write to file
-voila_filtered.to_csv(outfile, sep='\t', index=False)
+        if len(voila_df) > 0:
+            genes = pd.read_csv(snakemake.input.exp_genes, sep='\t', usecols=['gene'])
+            outfile = os.path.join(out_dir, filename)
+
+            # Drop genes that are not in the TPM filtered list
+            voila_filtered = voila_df[voila_df.gene_id.isin(genes.gene)] 
+
+            # Write to file
+            voila_filtered.to_csv(outfile, sep='\t', index=False)

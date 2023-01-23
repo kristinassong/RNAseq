@@ -69,3 +69,12 @@ tsv_deltapsi_filtered:
 
 merge_kallisto_quant:
   time: 30
+
+DE_up_genes_bound_by_sno:
+  time: 30
+
+DE_down_genes_bound_by_sno:
+  time: 30
+
+dummy_event_files:
+  time: 30

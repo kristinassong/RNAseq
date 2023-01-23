@@ -9,17 +9,6 @@ def get_samples_for_cond(con):
     
     return samples
 
-def get_majiq_files_psi(wildcards):
-
-    # Get all .majiq files for the current condition
-    con = wildcards.cond
-    samples = get_samples_for_cond(con)
-
-    return ' '.join([
-        f'results/majiq/build/{sample_id}_Aligned.sortedByCoord.out.primary.majiq'
-        for sample_id in samples
-    ])
-
 def majiq_deltapsi_name_format(wildcards):
 
     return " ".join(wildcards.comp.split("-"))
