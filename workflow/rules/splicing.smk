@@ -63,14 +63,16 @@ rule filter_genes:
     input:
         summary = rules.voila_deltapsi_categorize_events.output.summary,
         exp_genes = rules.merge_kallisto_quant.output.tpm
+    output:
+        bar_chart = "results/voila/deltapsi/event_types/{comp}/filtered/bar_chart.svg"
     params:
         indir = directory("results/voila/deltapsi/event_types/{comp}/raw"),
         outdir = directory("results/voila/deltapsi/event_types/{comp}/filtered")
-    output:
-        filtered_tsv = "results/voila/deltapsi/event_types/{comp}/filtered/summary.tsv"
+    conda:
+        "../envs/python_plots.yaml"
     log:
         "results/logs/voila/deltapsi_{comp}_event_types_filtered.log"
     message:
-        "Keep VOILA events only for the genes that are expressed."
+        "Keep VOILA events only for the genes that are expressed and generate a bar chart to represent the number of events for each splicing event type."
     script:
         "../scripts/voila_filter.py"
