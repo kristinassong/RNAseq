@@ -28,11 +28,11 @@ def get_majiq_files_deltapsi(comp):
     cond2_samples = get_samples_for_cond(cond2)
 
     cond1_majiq = ' '.join([
-        f'results/majiq/build/{sample_id}_Aligned.sortedByCoord.out.primary.majiq'
+        'results/majiq/'+comp+f'/build/{sample_id}_Aligned.sortedByCoord.out.primary.majiq'
         for sample_id in cond1_samples
     ])
     cond2_majiq = ' '.join([
-        f'results/majiq/build/{sample_id}_Aligned.sortedByCoord.out.primary.majiq'
+        'results/majiq/'+comp+f'/build/{sample_id}_Aligned.sortedByCoord.out.primary.majiq'
         for sample_id in cond2_samples
     ])
     return cond1_majiq, cond2_majiq

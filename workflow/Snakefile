@@ -14,7 +14,6 @@ configfile: "config/config.yaml"
 SNO = config["snoRNA"]
 SAMPLES = config["samples"]
 READS = ["R1","R2"]
-SPLICING_EVENTS = config["splicing_events"]
 
 df = pd.read_csv('data/comparisons.tsv', sep=' ')
 comparisons = [f'{cdn1}-{cdn2}' for cdn1, cdn2 in df.values]
@@ -35,28 +34,26 @@ include: "rules/quantification.smk"
 include: "rules/diffexp.smk"
 include: "rules/metrics.smk"
 include: "rules/splicing.smk"
-include: "rules/interactions.smk"
 
 
 #############################
 ## Target rules
 #############################
 
-#interactions = expand("results/interactions/{comp}_{diff}_genes_bound_by_{sno}.bed", comp=comparisons, sno=SNO, diff=["up","down"]),
-
 
 #### COMPLETE
+#fastqc = expand("results/fastqc/{step}/{sample}_{read}_fastqc.{ext}", sample=SAMPLES, read=READS, step=["pretrim","posttrim"], ext=["html","zip"])
+#bedgraphs = expand("results/genomecov/{sample}.bedgraph", sample=SAMPLES)
+#picard_files = expand("results/picard/{sample}.isize.{ext}", sample=SAMPLES, ext=["txt","pdf"])
 #multiqc = "results/multiqc/multiqc_report.html"
 #pca_plot = "results/pca/pca.svg"
 #volcano_plot = expand("results/volcano_plot/{comp}.svg", comp=comparisons)
 #sig_diffexp_genes = expand("results/volcano_plot/{comp}_sig_diffexp_genes_{change}.tsv", comp=comparisons, change=['up','down'])
+#splicing_events = expand("results/voila/deltapsi/event_types/{comp}/filtered/bar_chart.svg", comp=comparisons)
 
 #### NEED INTERNET CONNECTION
 #GO_bar_charts = expand("results/GO/GO_{comp}_{change}regulated_genes.svg", comp=comparisons, change=['up','down'])
 
 rule all:
     input:
-        fastqc = expand("results/fastqc/{step}/{sample}_{read}_fastqc.{ext}", sample=SAMPLES, read=READS, step=["pretrim","posttrim"], ext=["html","zip"]),
-        bedgraphs = expand("results/genomecov/{sample}.bedgraph", sample=SAMPLES),
-        picard_files = expand("results/picard/{sample}.isize.{ext}", sample=SAMPLES, ext=["txt","pdf"]),
         splicing_events = expand("results/voila/deltapsi/event_types/{comp}/filtered/bar_chart.svg", comp=comparisons)
