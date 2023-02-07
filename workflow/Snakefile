@@ -56,4 +56,4 @@ include: "rules/splicing.smk"
 
 rule all:
     input:
-        splicing_events = expand("results/voila/deltapsi/event_types/{comp}/filtered/bar_chart.svg", comp=comparisons)
+        cassette = expand("results/voila/deltapsi/event_types/{comp}/filtered/cassette_{type}.tsv", comp=comparisons, type=['simplified','bound_by_sno'])

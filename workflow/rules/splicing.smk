@@ -84,15 +84,17 @@ rule cassette_exons_bound_by_sno:
     input:
         bar_chart = rules.filter_genes_and_create_figures.output.bar_chart
     output:
+        cassette = "results/voila/deltapsi/event_types/{comp}/filtered/cassette_simplified.tsv",
+        intersect = "results/voila/deltapsi/event_types/{comp}/filtered/cassette_bound_by_sno.tsv"
     params:
         sno_interactions = config["path"]["sno_interactions"],
         snoRNA = config["snoRNA"],
         splicing = rules.filter_genes_and_create_figures.params.outdir
     conda:
-        "../envs/python_plots.yaml"
+        "../envs/pybedtools.yaml"
     log:
         "results/logs/voila/deltapsi_{comp}_cassette_exons_bound_by_sno.log"
     message:
-        "Search for cassette exons that are bound by the snoRNA in {comp}."
+        "Search for cassette exons that are bound by the snoRNA in {wildcards.comp}."
     script:
         "../scripts/cassette_and_sno.py"
