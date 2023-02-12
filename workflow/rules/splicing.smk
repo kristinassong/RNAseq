@@ -70,31 +70,13 @@ rule filter_genes_and_create_figures:
     params:
         indir = directory("results/voila/deltapsi/event_types/{comp}/raw"),
         outdir = directory("results/voila/deltapsi/event_types/{comp}/filtered"),
-        sno = config["snoRNA"]
+        sno = config["snoRNA"],
+        sno_interactions = config["path"]["sno_interactions"]
     conda:
         "../envs/python_plots.yaml"
     log:
         "results/logs/voila/deltapsi_{comp}_filter_genes_and_create_figures.log"
     message:
-        "Keep VOILA events only for the genes that are expressed and generate figures to compare splicing and differential expression."
+        "Keep VOILA events only for the genes that are expressed and generate figures to compare splicing, differential expression and snoRNA binding."
     script:
         "../scripts/voila_figures.py"
-
-rule cassette_exons_bound_by_sno:
-    input:
-        bar_chart = rules.filter_genes_and_create_figures.output.bar_chart
-    output:
-        cassette = "results/voila/deltapsi/event_types/{comp}/filtered/cassette_simplified.tsv",
-        intersect = "results/voila/deltapsi/event_types/{comp}/filtered/cassette_bound_by_sno.tsv"
-    params:
-        sno_interactions = config["path"]["sno_interactions"],
-        snoRNA = config["snoRNA"],
-        splicing = rules.filter_genes_and_create_figures.params.outdir
-    conda:
-        "../envs/pybedtools.yaml"
-    log:
-        "results/logs/voila/deltapsi_{comp}_cassette_exons_bound_by_sno.log"
-    message:
-        "Search for cassette exons that are bound by the snoRNA in {wildcards.comp}."
-    script:
-        "../scripts/cassette_and_sno.py"
