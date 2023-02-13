@@ -35,7 +35,7 @@ rule volcano_plot:
     log:
         "results/logs/volcano_plot/{comp}.log"
     conda:
-        "../envs/python_plots.yaml"
+        "../envs/python.yaml"
     message:
         "Create a volcano plot using deseq2 output for each comparison in comparisons.tsv."
     script:

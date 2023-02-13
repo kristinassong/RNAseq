@@ -108,7 +108,7 @@ rule pca:
     params:
         design = 'data/design.tsv'
     conda:
-        "../envs/python_plots.yaml"
+        "../envs/python.yaml"
     log:
         "results/logs/pca.log"
     message:

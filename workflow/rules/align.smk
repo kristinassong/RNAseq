@@ -91,7 +91,5 @@ rule genomecov:
         "../envs/genomecov.yaml"
     message:
         "Report {wildcards.sample} genome coverage in BEDGRAPH format."
-    # TmpScale counts the number of reads in the BAM and multiplies it by 1mio, rounded to 6 digits
     shell:
-        "TmpScale=$(bc <<< \"scale=6;1000000/$(samtools view -f 0 -c {input})\") && "
-        "bedtools genomecov -bg -split -ibam {input} -scale $TmpScale | sort -k1,1 -k2,2n > {output}"
+        "bedtools genomecov -bg -split -ibam {input} | sort -k1,1 -k2,2n > {output}"

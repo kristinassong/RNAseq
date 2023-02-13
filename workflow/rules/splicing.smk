@@ -73,7 +73,7 @@ rule filter_genes_and_create_figures:
         sno = config["snoRNA"],
         sno_interactions = config["path"]["sno_interactions"]
     conda:
-        "../envs/python_plots.yaml"
+        "../envs/python.yaml"
     log:
         "results/logs/voila/deltapsi_{comp}_filter_genes_and_create_figures.log"
     message:
