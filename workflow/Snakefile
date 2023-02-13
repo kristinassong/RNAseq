@@ -56,4 +56,4 @@ include: "rules/splicing.smk"
 
 rule all:
     input:
-        splicing_events = expand("results/voila/deltapsi/event_types/{comp}/filtered/bar_chart.svg", comp=comparisons)
+        bedgraphs = expand("results/genomecov/{sample}.bedgraph", sample=SAMPLES)
