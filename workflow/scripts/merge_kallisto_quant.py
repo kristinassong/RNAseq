@@ -34,7 +34,7 @@ for q in snakemake.input.quant:
 
 # transcript ID --> gene ID
 ids = pd.read_csv(tx2gene, sep='\t', names=['transcript','gene'])
-ids.set_index('transcript', inplace=True)
+ids.set_index('transcript', inplace=True, drop=False)
 
 final_df = pd.merge(final_df, ids, left_index=True, right_index=True)
 final_df.set_index('gene', inplace=True)
@@ -47,6 +47,24 @@ filtered = final_df[~((final_df[sample_list]<1).all(axis=1))]
 # only keep protein coding genes
 df_gtf = read_gtf(gtf)
 filtered_pc = filtered[filtered.index.isin(df_gtf.gene_id)]
+
+# Add gene name
+id_name = df_gtf[['gene_id','gene_name']].drop_duplicates(ignore_index=True)
+
+index = filtered_pc.index.tolist()
+names =[]
+
+for i in range(len(index)):
+    id = index[i]
+    name = id_name[id_name['gene_id']==id].iloc[0]['gene_name']
+    names.append(name)
+
+print(names)
+filtered_pc['gene_name'] = names
+cols = filtered_pc.columns.tolist()
+cols = cols[-1:] + cols[:-1]
+cols = cols[-1:] + cols[:-1]
+filtered_pc = filtered_pc[cols]
 
 # Write to file
 filtered_pc.to_csv(outfile, sep='\t')

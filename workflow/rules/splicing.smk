@@ -56,7 +56,7 @@ rule voila_deltapsi_categorize_events:
     shell:
         "source {params.majiq_tool} && "
         "voila modulize {input.splicegraph} {input.voila} "
-        "-d {params.outdir} -j 8 --overwrite "
+        "-d {params.outdir} -j 8 --overwrite --decomplexify-deltapsi-threshold 0.05 "
         "&> {log} && deactivate"
 
 rule filter_genes_and_create_figures:

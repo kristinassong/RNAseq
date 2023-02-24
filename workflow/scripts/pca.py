@@ -11,6 +11,7 @@ from sklearn.preprocessing import StandardScaler
 import re
 
 df = pd.read_csv(snakemake.input.tpm, sep='\t', index_col='gene')
+df = df.drop(columns=['transcript', 'gene_name'])
 df = df.T
 
 # Standardize the values (remove mean and divide by stdev)

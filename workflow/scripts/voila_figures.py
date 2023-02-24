@@ -107,11 +107,12 @@ def parse_voila(df):
             if isinstance(df.iloc[i][t], str):
                 coord = df.iloc[i][t].split("-") # list
                 for el in coord:
-                    if el == 'na' or el == '':
+                    if el in ['na','']:
                         coord.remove(el)
                     else:
                         el = int(el) # convert strings to ints
-
+                if '1' in coord:
+                    coord.remove('1')
                 if event_id in pos_dic:
                     pos_dic[event_id] = pos_dic[event_id] + coord
                 else:
@@ -129,7 +130,6 @@ def parse_voila(df):
         gene_name = event_info.iloc[0]['gene_name']
         seq_id = event_info.iloc[0]['seqid']
         strand = event_info.iloc[0]['strand']
-
         new_event = pd.DataFrame({"gene_name":gene_name,'seqid':seq_id,'strand':strand,'start':[min(pos_dic[e])],'end':[max(pos_dic[e])]})
         bed_df = pd.concat([bed_df, new_event])
 
@@ -166,14 +166,13 @@ def splicing_and_sno_binding(sno_interactions_dir, sno, splicing_dir):
                 splicing_bed = BedTool.from_dataframe(splicing_df)
                 sno_bed = BedTool.from_dataframe(sno_df)
 
-                df_intersect = splicing_bed.intersect(sno_bed, s=True).to_dataframe()
+                df_intersect = splicing_bed.intersect(sno_bed, s=True, u=True).to_dataframe()
                 if len(df_intersect) > 0:
-                    df_intersect.columns = ['seqid','start','end','gene_name','count','strand']
-                    df_intersect.drop_duplicates(inplace=True)
                     pd.set_option('display.max_rows', None) # no limit for displaying df rows
                     print(filename)
                     print(df_intersect)
                     common_count_event_id[filename.split(".")[0]] = len(df_intersect)
+                    df_intersect.columns = ['seqid','start','end','gene_name','count','strand']
                     df_intersect_by_gene = df_intersect.drop_duplicates(subset=['gene_name'])
                     common_count_gene[filename.split(".")[0]] = len(df_intersect_by_gene)
                 else:
