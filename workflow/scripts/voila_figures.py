@@ -125,7 +125,7 @@ def parse_voila(df):
 
     for e in pos_dic.keys():
 
-        # Grep info from cassette_simp
+        # Grep info
         event_info = info_df[info_df['event_id'] == e]
         gene_name = event_info.iloc[0]['gene_name']
         seq_id = event_info.iloc[0]['seqid']
@@ -151,6 +151,7 @@ def splicing_and_sno_binding(sno_interactions_dir, sno, splicing_dir):
     sno_df = parse_sno(sno_interactions_dir, sno) # sno interaction file
 
     # For each splicing event type, find splicing events/genes that are also bound by the snoRNA
+    print('Splicing events bound by snoRNA')
     for filename in os.listdir(splicing_dir):
         if '.tsv' in filename and filename.split(".")[0] in SPLICING_EVENTS:
             
@@ -162,12 +163,13 @@ def splicing_and_sno_binding(sno_interactions_dir, sno, splicing_dir):
 
                 splicing_df = parse_voila(df)
 
-                # Find cassette exons that are bound by the sno
                 splicing_bed = BedTool.from_dataframe(splicing_df)
                 sno_bed = BedTool.from_dataframe(sno_df)
 
-                df_intersect = splicing_bed.intersect(sno_bed, s=True, u=True).to_dataframe()
+                df_intersect = splicing_bed.intersect(sno_bed, s=True).to_dataframe()
                 if len(df_intersect) > 0:
+                    # drop duplicate rows
+                    df_intersect.drop_duplicates(inplace=True)
                     pd.set_option('display.max_rows', None) # no limit for displaying df rows
                     print(filename)
                     print(df_intersect)
