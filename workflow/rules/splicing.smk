@@ -80,3 +80,26 @@ rule filter_genes_and_create_figures:
         "Keep VOILA events only for the genes that are expressed and generate figures to compare splicing, differential expression and snoRNA binding."
     script:
         "../scripts/voila_figures.py"
+
+rule rmats:
+    input:
+        bam = expand(rules.primary_alignments.output, sample=SAMPLES),
+        group1 = "data/rmats_b1.txt",
+        group2 = "data/rmats_b2.txt",
+        gtf = config["path"]["genome_gtf"]
+    output:
+        outdir = directory("results/rmats/{comp}"),
+        tmpdir = directory("results/rmats/{comp}/tmp"),
+        summary = "results/rmats/{comp}/summary.txt"
+    params:
+        readlength = config["params"]["readlength"]
+    conda:
+        "../envs/rmats.yaml"
+    log:
+        "results/logs/rmats/{comp}.log"
+    message:
+        "Run rMATS for {wildcards.comp}."
+    shell:
+        "rmats.py --b1 {input.group1} --b2 {input.group2} "
+        "--gtf {input.gtf} -t paired --readLength {params.readlength} "
+        "--nthread 4 --od {output.outdir} --tmp {output.tmpdir}"
