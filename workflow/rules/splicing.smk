@@ -88,9 +88,9 @@ rule rmats:
         group2 = "data/rmats_b2.txt",
         gtf = config["path"]["genome_gtf"]
     output:
-        outdir = directory("results/rmats/{comp}"),
+        outdir = directory("results/rmats/{comp}/raw"),
         tmpdir = directory("results/rmats/{comp}/tmp"),
-        summary = "results/rmats/{comp}/summary.txt"
+        summary = "results/rmats/{comp}/raw/summary.txt"
     params:
         readlength = config["params"]["readlength"]
     conda:
@@ -103,3 +103,24 @@ rule rmats:
         "rmats.py --b1 {input.group1} --b2 {input.group2} "
         "--gtf {input.gtf} -t paired --readLength {params.readlength} "
         "--nthread 4 --od {output.outdir} --tmp {output.tmpdir}"
+
+rule filter_rmats:
+    input:
+        summary = rules.rmats.output.summary,
+        sno = '/home/kris98/scratch/sno_interactions/SNORD22_95.bed',
+        eftud2 = '/home/kris98/scratch/rbp_interactions/EFTUD2_lenient.bed',
+        prpf8 = '/home/kris98/scratch/rbp_interactions/PRPF8_lenient.bed'
+    output:
+        result = 'results/rmats/{comp}/filtered/SE_SNORD22.tsv'
+    params:
+        indir = directory("results/rmats/{comp}/raw"),
+        outdir = directory("results/rmats/{comp}/filtered"),
+        tpm = rules.merge_kallisto_quant.output.tpm
+    conda:
+        "../envs/python.yaml"
+    log:
+        "results/logs/rmats/filter_{comp}.log"
+    message:
+        "Filter raw rMATS output for {wildcards.comp}."
+    script:
+        "../scripts/filter_rmats.py"

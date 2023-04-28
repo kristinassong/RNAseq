@@ -56,4 +56,4 @@ include: "rules/splicing.smk"
 
 rule all:
     input:
-        rmats = expand("results/rmats/{comp}/summary.txt", comp=comparisons)
+        rmats = expand('results/rmats/{comp}/filtered/SE_SNORD22.tsv', comp=comparisons)
