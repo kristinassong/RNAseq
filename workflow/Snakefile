@@ -50,10 +50,11 @@ include: "rules/splicing.smk"
 #volcano_plot = expand("results/volcano_plot/{comp}.svg", comp=comparisons)
 #sig_diffexp_genes = expand("results/volcano_plot/{comp}_sig_diffexp_genes_{change}.tsv", comp=comparisons, change=['up','down'])
 #splicing_events = expand("results/voila/deltapsi/event_types/{comp}/filtered/bar_chart.svg", comp=comparisons)
+#rmats = expand('results/rmats/{comp}/filtered/SE_EFTUD2.tsv', comp=comparisons)
 
 #### NEED INTERNET CONNECTION
 #GO_bar_charts = expand("results/GO/GO_{comp}_{change}regulated_genes.svg", comp=comparisons, change=['up','down'])
 
 rule all:
     input:
-        rmats = expand('results/rmats/{comp}/filtered/SE_SNORD22.tsv', comp=comparisons)
+        rmats = expand("results/rmats/{comp}/filtered/SE_EFTUD2.tsv", comp=comparisons)

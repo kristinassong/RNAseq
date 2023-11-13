@@ -64,7 +64,9 @@ rule filter_genes_and_create_figures:
         summary = rules.voila_deltapsi_categorize_events.output.summary,
         exp_genes = rules.merge_kallisto_quant.output.tpm,
         DE_up = rules.volcano_plot.output.up_genes,
-        DE_down = rules.volcano_plot.output.down_genes
+        DE_down = rules.volcano_plot.output.down_genes,
+        eftud2 = '/home/kris98/scratch/rbp_interactions/EFTUD2_lenient.bed',
+        prpf8 = '/home/kris98/scratch/rbp_interactions/PRPF8_lenient.bed'
     output:
         bar_chart = "results/voila/deltapsi/event_types/{comp}/filtered/bar_chart.svg"
     params:
@@ -102,25 +104,41 @@ rule rmats:
     shell:
         "rmats.py --b1 {input.group1} --b2 {input.group2} "
         "--gtf {input.gtf} -t paired --readLength {params.readlength} "
-        "--nthread 4 --od {output.outdir} --tmp {output.tmpdir}"
+        "--nthread 4 --od {output.outdir} --tmp {output.tmpdir} --novelSS"
 
 rule filter_rmats:
     input:
-        summary = rules.rmats.output.summary,
-        sno = '/home/kris98/scratch/sno_interactions/SNORD22_95.bed',
-        eftud2 = '/home/kris98/scratch/rbp_interactions/EFTUD2_lenient.bed',
-        prpf8 = '/home/kris98/scratch/rbp_interactions/PRPF8_lenient.bed'
+        summary = rules.rmats.output.summary
     output:
-        result = 'results/rmats/{comp}/filtered/SE_SNORD22.tsv'
+        result = 'results/rmats/{comp}/filtered/SE.tsv'
     params:
         indir = directory("results/rmats/{comp}/raw"),
         outdir = directory("results/rmats/{comp}/filtered"),
-        tpm = rules.merge_kallisto_quant.output.tpm
+        tpm = rules.merge_kallisto_quant.output.tpm,
+        binding = False
     conda:
         "../envs/python.yaml"
     log:
         "results/logs/rmats/filter_{comp}.log"
     message:
         "Filter raw rMATS output for {wildcards.comp}."
+    script:
+        "../scripts/filter_rmats.py"
+
+rule rmats_bound:
+    input:
+        rmats_output = rules.filter_rmats.output.result,
+        binding_factors = "data/rmats_bound.txt"
+    output:
+        result = 'results/rmats/{comp}/filtered/SE_EFTUD2.tsv'
+    params:
+        working_dir = directory("results/rmats/{comp}/filtered"),
+        binding = True
+    conda:
+        "../envs/python.yaml"
+    log:
+        "results/logs/rmats/binding_factors_{comp}.log"
+    message:
+        "Find {wildcards.comp} AS events identified by rMATS bound by snoRNAs and RBPs."
     script:
         "../scripts/filter_rmats.py"

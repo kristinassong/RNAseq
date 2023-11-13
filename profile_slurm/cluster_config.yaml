@@ -78,3 +78,9 @@ DE_down_genes_bound_by_sno:
 
 dummy_event_files:
   time: 30
+
+filter_rmats:
+  time: 30
+
+rmats_bound:
+  time: 30
