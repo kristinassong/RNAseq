@@ -13,26 +13,24 @@ configfile: "config/config.yaml"
 
 SNO = config["snoRNA"]
 SAMPLES = config["samples"]
-READS = ["R1","R2"]
 
-df = pd.read_csv('data/comparisons.tsv', sep=' ')
-comparisons = [f'{cdn1}-{cdn2}' for cdn1, cdn2 in df.values]
-comparisons_full = [f'results/deseq2/{cdn1}-{cdn2}.csv' for cdn1, cdn2 in df.values]
+df = pd.read_csv('resources/comparisons.tsv', delim_whitespace=True)
+comparisons = ["%s-%s" % (cdn1,cdn2) for [cdn1, cdn2] in df.values.tolist()]
+#comparisons_full = [f'results/deseq2/{cdn1}-{cdn2}.csv' for cdn1, cdn2 in df.values.tolist()]
 
-df_cond = pd.read_csv('data/design.tsv',delim_whitespace=True,usecols=['sample','condition'])
+df_cond = pd.read_csv('resources/design.tsv', delim_whitespace=True, usecols=['sample','condition'])
 conditions = df_cond['condition'].unique().tolist()
 
 #############################
 ## Load rules
 #############################
 
-include: "rules/functions.smk"
+#include: "rules/functions.smk"
 include: "rules/trim.smk"
-include: "rules/fastqc.smk"
 include: "rules/align.smk"
 include: "rules/quantification.smk"
-include: "rules/diffexp.smk"
-include: "rules/metrics.smk"
+#include: "rules/diffexp.smk"
+include: "rules/plots.smk"
 include: "rules/splicing.smk"
 
 
@@ -42,11 +40,6 @@ include: "rules/splicing.smk"
 
 
 #### COMPLETE
-#fastqc = expand("results/fastqc/{step}/{sample}_{read}_fastqc.{ext}", sample=SAMPLES, read=READS, step=["pretrim","posttrim"], ext=["html","zip"])
-#bedgraphs = expand("results/genomecov/{sample}.bedgraph", sample=SAMPLES)
-#picard_files = expand("results/picard/{sample}.isize.{ext}", sample=SAMPLES, ext=["txt","pdf"])
-#multiqc = "results/multiqc/multiqc_report.html"
-#pca_plot = "results/pca/pca.svg"
 #volcano_plot = expand("results/volcano_plot/{comp}.svg", comp=comparisons)
 #sig_diffexp_genes = expand("results/volcano_plot/{comp}_sig_diffexp_genes_{change}.tsv", comp=comparisons, change=['up','down'])
 #splicing_events = expand("results/voila/deltapsi/event_types/{comp}/filtered/bar_chart.svg", comp=comparisons)
@@ -57,4 +50,8 @@ include: "rules/splicing.smk"
 
 rule all:
     input:
-        rmats = expand("results/rmats/{comp}/filtered/SE_EFTUD2.tsv", comp=comparisons)
+        fastqc = expand("results/fastqc/{step}/{sample}_{read}_fastqc.html", sample=SAMPLES, read=["R1","R2"], step=["pretrim","posttrim"]),
+        bedgraphs = expand("results/genomecov/{sample}.bedgraph", sample=SAMPLES),
+        rMATS = expand('results/rmats/{comp}/filtered/SE.tsv', comp=comparisons)
+        #pca = expand("results/pca/pca_{comp}.svg", comp=comparisons), # pca.py script specific for NC vs KD conditions; Modify as needed
+        #picard_files = expand("results/picard/{sample}.isize.pdf", sample=SAMPLES),

@@ -47,9 +47,9 @@ def color_palette(labels):
     for l in labels:
         if 'NC' in l and 'dimgray' not in palette:
             palette.append('dimgray')
-        elif 'ASO1' in l and 'seagreen' not in palette: # blue, seagreen
-            palette.append('seagreen')
-        elif 'ASO2' in l and 'mediumseagreen' not in palette: # royalblue, mediumseagreen
+        elif 'ASO1' in l and 'salmon' not in palette:
+            palette.append('salmon')
+        elif 'ASO2' in l and 'mediumseagreen' not in palette:
             palette.append('mediumseagreen')
         else:
             continue
@@ -60,7 +60,6 @@ def pca_plot(df, x_col, y_col, hue_col, xlabel, ylabel, title, path, **kwargs):
     
     # Creates a PCA (scatter) plot (using a x, y and hue column).
     
-    #sns.set_theme()
     plt.figure(figsize=(5.5,4))
     plt.rcParams['svg.fonttype'] = 'none'
     plt.rcParams["legend.loc"] = 'upper right'

@@ -3,84 +3,96 @@ rule star_index:
         fasta = config["path"]["genome_fasta"],
         gtf = config["path"]["genome_gtf"]
     output:
-        directory("data/references/star_index")
+        "results/STAR/index/chrNameLength.txt"
+    params:
+        idx = "results/STAR/index"
     threads: 
-        8
+        32
     conda:
-        "../envs/star.yaml"
+        "../envs/STAR.yaml"
     log:
-        "results/logs/star/index.log"
+        "results/logs/STAR/index.log"
     message:
         "Generate genome indexes files using STAR."
     shell:
         "STAR --runThreadN {threads} "
         "--runMode genomeGenerate "
-        "--genomeDir {output} "
+        "--genomeDir {params.idx} "
         "--genomeFastaFiles {input.fasta} "
         "--sjdbGTFfile {input.gtf} "
         "--sjdbOverhang 99 "
         "&> {log}"
 
+
 rule star_align:
     input:
         fq1 = rules.trimmomatic.output.r1,
         fq2 = rules.trimmomatic.output.r2,
-        idx = rules.star_index.output
+        chrNameLength = rules.star_index.output
     output:
-        aln = "results/star/{sample}/{sample}_Aligned.sortedByCoord.out.bam"
+        bam = "results/STAR/{sample}/{sample}_Aligned.sortedByCoord.out.bam"
     log:
-        "results/logs/star/{sample}.log"
+        "results/logs/STAR/{sample}_align.log"
     conda:
-        "../envs/star.yaml"
+        "../envs/STAR.yaml"
     params:
-        extra = config["params"]["star"],
-        out_prefix = "results/star/{sample}/{sample}_"
+        out_prefix = "results/STAR/{sample}/{sample}_",
+        idx = rules.star_index.params.idx
     threads:
-        8
+        32
     message:
         "Align {wildcards.sample} reads to the reference genome using STAR."
     shell:
         "STAR --runMode alignReads "
-        "--genomeDir {input.idx} "
+        "--genomeDir {params.idx} "
         "--readFilesIn {input.fq1} {input.fq2} "
         "--runThreadN {threads} "
         "--readFilesCommand zcat --outReadsUnmapped Fastx "
         "--outFilterType BySJout --outStd Log --outSAMunmapped None "
         "--outSAMtype BAM SortedByCoordinate "
         "--outFileNamePrefix {params.out_prefix} "
-        "{params.extra} "
+        "--outFilterScoreMinOverLread 0.3 --outFilterMatchNminOverLread 0.3 "
+        "--outFilterMultimapNmax 100 --winAnchorMultimapNmax 100 "
+        "--alignEndsProtrude 5 ConcordantPair "
         "&> {log}"
 
+
 rule primary_alignments:
-    # More robust results with multimapped reads
     input:
-        rules.star_align.output.aln
+        rules.star_align.output.bam
     output:
-        "results/star/{sample}/{sample}_Aligned.sortedByCoord.out.primary.bam"
+        "results/STAR/{sample}/{sample}_Aligned.sortedByCoord.out.primary.bam"
     log:
-        "results/logs/star/{sample}_primary.log"
+        "results/logs/STAR/{sample}_primary.log"
     conda:
-        "../envs/genomecov.yaml"
+        "../envs/STAR.yaml"
     message:
         "Keep primary alignments only for {wildcards.sample}."
     shell:
         "samtools view -b -F 256 -o {output} {input} "
         "&> {log}"
 
-rule bam_index:
+
+rule picard:
     input:
         rules.primary_alignments.output
     output:
-        "results/star/{sample}/{sample}_Aligned.sortedByCoord.out.primary.bam.bai"
+        txt = "results/picard/{sample}.isize.txt",
+        pdf = "results/picard/{sample}.isize.pdf"
     log:
-        "results/logs/star/{sample}_primary_index.log"
+        "results/logs/picard/{sample}.log"
     conda:
-        "../envs/genomecov.yaml"
+        "../envs/picard.yaml"
     message:
-        "Create a BAI index for {wildcards.sample}."
+        "Collect insert size distribution metrics for validating library construction for {wildcards.sample}."
     shell:
-        "samtools index {input} "
-        "&> {log}"  
+        "picard CollectInsertSizeMetrics "
+        "--INPUT {input} "
+        "--OUTPUT {output.txt} "
+        "--Histogram_FILE {output.pdf} "
+        "--MINIMUM_PCT 0.5 "
+        "&> {log}"
+
 
 rule genomecov:
     input:

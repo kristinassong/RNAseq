@@ -1,3 +1,7 @@
+###############################################################
+# MAJIQ/VOILA
+###############################################################
+"""
 rule majiq_build:
     input:
         gff3 = config["path"]["gff3"],
@@ -83,11 +87,16 @@ rule filter_genes_and_create_figures:
     script:
         "../scripts/voila_figures.py"
 
+"""
+###############################################################
+# rMATS
+###############################################################
+
 rule rmats:
     input:
         bam = expand(rules.primary_alignments.output, sample=SAMPLES),
-        group1 = "data/rmats_b1.txt",
-        group2 = "data/rmats_b2.txt",
+        group1 = "resources/rmats_b1.txt",
+        group2 = "resources/rmats_b2.txt",
         gtf = config["path"]["genome_gtf"]
     output:
         outdir = directory("results/rmats/{comp}/raw"),
@@ -103,8 +112,9 @@ rule rmats:
         "Run rMATS for {wildcards.comp}."
     shell:
         "rmats.py --b1 {input.group1} --b2 {input.group2} "
-        "--gtf {input.gtf} -t paired --readLength {params.readlength} "
-        "--nthread 4 --od {output.outdir} --tmp {output.tmpdir} --novelSS"
+        "--gtf {input.gtf} -t paired --readLength {params.readlength} --variable-read-length "
+        "--nthread 4 --od {output.outdir} --tmp {output.tmpdir}"
+
 
 rule filter_rmats:
     input:
@@ -112,33 +122,16 @@ rule filter_rmats:
     output:
         result = 'results/rmats/{comp}/filtered/SE.tsv'
     params:
-        indir = directory("results/rmats/{comp}/raw"),
-        outdir = directory("results/rmats/{comp}/filtered"),
+        dir = directory("results/rmats/{comp}"),
         tpm = rules.merge_kallisto_quant.output.tpm,
-        binding = False
+        gtf = config["path"]["genome_gtf"],
+        fdr = 0.01,
+        deltapsi = 0.10
     conda:
         "../envs/python.yaml"
     log:
         "results/logs/rmats/filter_{comp}.log"
     message:
         "Filter raw rMATS output for {wildcards.comp}."
-    script:
-        "../scripts/filter_rmats.py"
-
-rule rmats_bound:
-    input:
-        rmats_output = rules.filter_rmats.output.result,
-        binding_factors = "data/rmats_bound.txt"
-    output:
-        result = 'results/rmats/{comp}/filtered/SE_EFTUD2.tsv'
-    params:
-        working_dir = directory("results/rmats/{comp}/filtered"),
-        binding = True
-    conda:
-        "../envs/python.yaml"
-    log:
-        "results/logs/rmats/binding_factors_{comp}.log"
-    message:
-        "Find {wildcards.comp} AS events identified by rMATS bound by snoRNAs and RBPs."
     script:
         "../scripts/filter_rmats.py"

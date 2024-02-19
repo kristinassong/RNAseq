@@ -1,5 +1,8 @@
-data/
 results/
+results_old/
+workflow/scripts/filter_rmats_old.py
+
+resources/
 
 .DS_Store
 .snakemake/

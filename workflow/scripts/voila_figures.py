@@ -16,11 +16,23 @@ DE_down = snakemake.input.DE_down
 outfile = snakemake.output.bar_chart
 sno = snakemake.params.sno[0]
 sno_interactions_dir = snakemake.params.sno_interactions
+eftud2_file = snakemake.input.eftud2
+prpf8_file = snakemake.input.prpf8
 
 SPLICING_EVENTS = ['alt3and5prime','alt3prime','alt5prime','alternate_first_exon','alternate_last_exon','alternative_intron',
                     'cassette','multi_exon_spanning','mutually_exclusive','p_alt3prime','p_alt5prime',
                     'p_alternate_first_exon','p_alternate_last_exon','tandem_cassette']
 
+sno_df = pd.read_csv(sno_file,sep='\t')
+eftud2_df = pd.read_csv(eftud2_file,sep='\t')
+prpf8_df = pd.read_csv(prpf8_file,sep='\t')
+
+def binding_ovlp(df1,df2):
+    # bedtools intersect between binding interactions
+    bed1 = BedTool.from_dataframe(df1)
+    bed2 = BedTool.from_dataframe(df2)
+    intersection_df = bed1.intersect(bed2,s=True).to_dataframe()
+    return intersection_df
 
 def filter_genes(raw_dir,out_dir,exp_genes):
     # Group by event_id and gene_id
@@ -143,6 +155,26 @@ def parse_voila(df):
 
     return bed_df
 
+def splicing_and_rbp_binding(splicing_dir,rbp_df):
+    # For each splicing event type, find splicing events/genes that are also bound by the RBP
+    for filename in os.listdir(splicing_dir):
+        if '.tsv' in filename and filename.split(".")[0] in SPLICING_EVENTS:
+            f = os.path.join(splicing_dir, filename)
+            df = pd.read_csv(f, sep='\t', usecols=['gene_id','gene_name','seqid','strand','event_id',
+                                                    'reference_exon_coord','spliced_with_coord','junction_coord'])
+            if len(df) > 0:
+                splicing_df = parse_voila(df)
+                splicing_bed = BedTool.from_dataframe(splicing_df)
+                rbp_bed = BedTool.from_dataframe(rbp_df)
+                df_intersect = splicing_bed.intersect(rbp_bed, s=True).to_dataframe()
+                if len(df_intersect) > 0:
+                    # drop duplicate rows
+                    df_intersect.drop_duplicates(inplace=True)
+                    pd.set_option('display.max_rows', None) # no limit for displaying df rows
+                    print(filename)
+                    print(df_intersect)
+    return
+
 def splicing_and_sno_binding(sno_interactions_dir, sno, splicing_dir):
 
     common_count_event_id = {}
@@ -235,7 +267,19 @@ def create_figures(event_df, gene_df, gene_lst, DE_up_file, DE_down_file, outfil
 
     return
 
+# Overlap of binding interactions
+sno_eftud2_df = binding_ovlp(sno_df,eftud2_df)
+sno_prpf8_df = binding_ovlp(sno_df,prpf8_df)
+sno_eftud2_prpf8_df = binding_ovlp(sno_eftud2_df,prpf8_df)
+
+eftud2_prpf8_df = binding_ovlp(eftud2_df,prpf8_df)
 
 # Call functions
 event_id_count_df, gene_id_count_df, gene_lists = filter_genes(raw_dir,out_dir,exp_genes)
 create_figures(event_id_count_df, gene_id_count_df, gene_lists, DE_up, DE_down, outfile, sno, sno_interactions_dir, out_dir)
+print('Splicing events bound by EFTUD2')
+splicing_and_rbp_binding(out_dir,eftud2_df)
+print('Splicing events bound by PRPF8')
+splicing_and_rbp_binding(out_dir,prpf8_df)
+print('Splicing events bound by EFTUD2 and PRPF8')
+splicing_and_rbp_binding(out_dir,eftud2_prpf8_df)

@@ -39,19 +39,11 @@ ids.set_index('transcript', inplace=True, drop=False)
 final_df = pd.merge(final_df, ids, left_index=True, right_index=True)
 final_df.set_index('gene', inplace=True)
 
-# Filter genes by TPM
-# TPM >=1 in at least one sample
-filtered = final_df[~((final_df[sample_list]<1).all(axis=1))]
-
-# Filter genes by biotype
-# only keep protein coding genes
-df_gtf = read_gtf(gtf)
-filtered_pc = filtered[filtered.index.isin(df_gtf.gene_id)]
-
 # Add gene name
-id_name = df_gtf[['gene_id','gene_name']].drop_duplicates(ignore_index=True)
+df_gtf = read_gtf(gtf)
+id_name = df_gtf[['gene_id','gene_name']].to_pandas().drop_duplicates(ignore_index=True)
 
-index = filtered_pc.index.tolist()
+index = final_df.index.tolist()
 names =[]
 
 for i in range(len(index)):
@@ -59,12 +51,11 @@ for i in range(len(index)):
     name = id_name[id_name['gene_id']==id].iloc[0]['gene_name']
     names.append(name)
 
-print(names)
-filtered_pc['gene_name'] = names
-cols = filtered_pc.columns.tolist()
+final_df['gene_name'] = names
+cols = final_df.columns.tolist()
 cols = cols[-1:] + cols[:-1]
 cols = cols[-1:] + cols[:-1]
-filtered_pc = filtered_pc[cols]
+final_df = final_df[cols]
 
 # Write to file
-filtered_pc.to_csv(outfile, sep='\t')
+final_df.to_csv(outfile, sep='\t')

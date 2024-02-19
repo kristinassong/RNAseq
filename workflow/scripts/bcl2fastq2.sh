@@ -11,7 +11,7 @@
 ### Modified from Gabrielle Deschamps-Francoeur's script 
 
 source /home/kris98/miniconda3/etc/profile.d/conda.sh &&
-conda activate snakemake &&
+conda activate smake &&
 
 run=../../data/samples/220923_NB502083_0194_AHVGMKBGXM
 path=$run/bcl

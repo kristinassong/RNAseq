@@ -1,5 +1,5 @@
 __default__:
-  account: def-scottmic
+  account: def-sabou
   mail-user: kristina.song@usherbrooke.ca
   mail-type: FAIL
   job-name: "smk_{rule}_{wildcards}"
@@ -11,17 +11,6 @@ __default__:
   output: results/logs/slurmout/{rule}.{wildcards}.out
   error: results/logs/slurmout/{rule}.{wildcards}.err
 
-fastqc_pretrim:
-  time: 30
-
-pretrim_fname:
-  time: 30
-
-fastqc_posttrim_R1:
-  time: 30
-
-fastqc_posttrim_R2:
-  time: 30
 
 star_index:
   mem: 128000M
@@ -30,57 +19,3 @@ star_index:
 star_align:
   mem: 128000M
   cpus-per-task: 32
-
-primary_alignments:
-  mem: 4000M
-  time: 120
-  cpus-per-task: 1
-
-genomecov:
-  mem: 8000M
-  cpus-per-task: 1
-
-kallisto_index:
-  mem: 128000M
-  cpus-per-task: 32
-
-kallisto_quant:
-  mem: 128000M
-  cpus-per-task: 32
-
-picard:
-  time: 30
-
-pca:
-  time: 30
-
-majiq_build:
-  mem: 128000M
-  cpus-per-task: 32
-
-volcano_plot:
-  time: 30
-
-tsv_psi_filtered:
-  time: 30
-
-tsv_deltapsi_filtered:
-  time: 30
-
-merge_kallisto_quant:
-  time: 30
-
-DE_up_genes_bound_by_sno:
-  time: 30
-
-DE_down_genes_bound_by_sno:
-  time: 30
-
-dummy_event_files:
-  time: 30
-
-filter_rmats:
-  time: 30
-
-rmats_bound:
-  time: 30

@@ -3,19 +3,22 @@ rule build_transcriptome:
         genome = config["path"]["genome_fasta"],
         gtf = config["path"]["genome_gtf"]
     output:
-        config["path"]["transcriptome"]
+        'resources/transcriptome.fa'
+    log:
+        "results/logs/gffread.log"
     conda:
         "../envs/gffread.yaml"
     message:
         "Build a reference transcriptome using gffread."
     shell:
-        "gffread {input.gtf} -g {input.genome} -w {output}"
+        "gffread {input.gtf} -g {input.genome} -w {output} &> {log}"
+
 
 rule kallisto_index:
     input:
         rules.build_transcriptome.output
     output:
-        "data/references/kallisto.idx"
+        "results/kallisto/kallisto.idx"
     params:
         31
     conda:
@@ -23,13 +26,14 @@ rule kallisto_index:
     log:
         "results/logs/kallisto/index.log"
     message:
-        "Builds an index from the FASTA file."
+        "Build a Kallisto index from the transcriptome FASTA file."
     shell:
         "kallisto index "
         "--index={output} "
         "--kmer-size={params} "
         "{input} "
         "&> {log}"
+
 
 rule kallisto_quant:
     input:
@@ -59,11 +63,12 @@ rule kallisto_quant:
         "{input.fq1} {input.fq2} "
         "&> {log}"
 
+
 rule tx2gene:
     input:
         gtf = config["path"]["genome_gtf"]
     output:
-        tsv = "data/references/tx2gene.tsv"
+        tsv = "resources/tx2gene.tsv"
     conda:
         "../envs/python.yaml"
     message:
@@ -71,23 +76,12 @@ rule tx2gene:
     script:
         "../scripts/tx2gene.py"
 
-rule filter_gtf_pc_genes:
-    input:
-        gtf = config['path']['genome_gtf']
-    output:
-        pc_gtf = "data/references/hg38_Ensembl_V101_Scottlab_2020.protein_coding.gtf"
-    log:
-        "results/logs/kallisto/filter_gtf_pc_genes.log"
-    message:
-        "Extract protein coding genes from the genome annotation file."
-    shell:
-        "grep \'protein_coding\' {input} > {output}"
 
 rule merge_kallisto_quant:
     input:
         quant = expand(rules.kallisto_quant.output, sample=SAMPLES),
         tx2gene = rules.tx2gene.output.tsv,
-        gtf = rules.filter_gtf_pc_genes.output.pc_gtf
+        gtf = config["path"]["genome_gtf"]
     output:
         tpm = "results/kallisto/tpm.tsv"
     conda:
@@ -98,40 +92,3 @@ rule merge_kallisto_quant:
         "Merge kallisto quantification results into one dataframe for further analysis."
     script:
         "../scripts/merge_kallisto_quant.py"
-
-rule pca:
-    input:
-        tpm = rules.merge_kallisto_quant.output.tpm
-    output:
-        plot = "results/pca/pca.svg",
-        tsv = "results/pca/pca.tsv"
-    params:
-        design = 'data/design.tsv'
-    conda:
-        "../envs/python.yaml"
-    log:
-        "results/logs/pca.log"
-    message:
-        "Generate a PCA plot to observe variance between samples."
-    script:
-        "../scripts/pca.py"
-
-rule multiqc:
-    input:
-        star = expand(rules.primary_alignments.output, sample=SAMPLES),
-        tpm = rules.merge_kallisto_quant.output.tpm
-    output:
-        html = "results/multiqc/multiqc_report.html"
-    params:
-        scan_dir = "results/fastqc results/star/*/*Log.final.out results/kallisto results/picard results/logs/trimmomatic",
-        outdir = directory('results/multiqc')
-    log:
-        "results/logs/multiqc.log"
-    message:
-        "Summarize analysis results for multiple tools and samples in a single report."
-    conda:
-        "../envs/fastqc.yaml"
-    shell:
-        "multiqc {params.scan_dir} "
-        "--outdir {params.outdir} "
-        "&> {log}"
