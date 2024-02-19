@@ -77,12 +77,11 @@ for event in SPLICING_EVENTS:
     file = os.path.join(rmats_dir, event)
     event_type = event.split(".")[0]
     print(event_type+"...")
-    df_org = pd.read_csv(file, sep='\t')
-    df_parsed = parse_splicing_df(df_org,event_type)
+    df_parsed = parse_splicing_df(pd.read_csv(file, sep='\t'),event_type)
     padded_df = pad_splicing_events(df_parsed)
     padded_bed = BedTool.from_dataframe(padded_df)
 
     intersection_df = padded_bed.intersect(sno_bed,s=True,u=True).to_dataframe(disable_auto_names=True, names=['chr','start','end','ID','score','strand'])
     sno_name = os.path.basename(sno_interaction).split(".")[0]
     outfile = os.path.join(rmats_dir, event_type+"_"+sno_name+".tsv")
-    get_full_entry(intersection_df, df_org).to_csv(outfile,sep='\t',index=None)
+    get_full_entry(intersection_df, pd.read_csv(file, sep='\t')).to_csv(outfile,sep='\t',index=None)
