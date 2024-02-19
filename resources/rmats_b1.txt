@@ -1,0 +1,1 @@
+results/STAR/NC5_n2_S6/NC5_n2_S6_Aligned.sortedByCoord.out.primary.bam,results/STAR/NC5_n3_S1/NC5_n3_S1_Aligned.sortedByCoord.out.primary.bam

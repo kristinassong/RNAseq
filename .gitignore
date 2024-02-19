@@ -2,7 +2,9 @@ results/
 results_old/
 workflow/scripts/filter_rmats_old.py
 
-resources/
+resources/samples/
+resources/transcriptome.fa
+resources/tx2gene.tsv
 
 .DS_Store
 .snakemake/
