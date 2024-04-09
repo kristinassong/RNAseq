@@ -83,11 +83,9 @@ rule merge_kallisto_quant:
         tx2gene = rules.tx2gene.output.tsv,
         gtf = config["path"]["genome_gtf"]
     output:
-        tpm = "results/kallisto/tpm.tsv"
+        tpm = "results/kallisto/tpm_{comp}.tsv"
     conda:
         "../envs/python.yaml"
-    log:
-        "results/logs/kallisto/merge_kallisto_quant.log"
     message: 
         "Merge kallisto quantification results into one dataframe for further analysis."
     script:
