@@ -8,8 +8,6 @@ rule pca:
         design = 'resources/design.tsv'
     conda:
         "../envs/plots.yaml"
-    log:
-        "results/logs/pca_{comp}.log"
     message:
         "Generate a PCA plot to observe variance between {wildcards.comp} samples."
     script:
