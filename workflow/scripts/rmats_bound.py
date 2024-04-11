@@ -8,9 +8,9 @@ from pybedtools import BedTool
 SPLICING_EVENTS = ['SE.tsv','A5SS.tsv','A3SS.tsv','MXE.tsv','RI.tsv']
 
 rmats_dir = "/home/kristinasong/Desktop/git/RNAseq/results/rmats/NC5-22/filtered"
-sno_interaction = "/home/kristinasong/Desktop/interactions/snoGloBe/ENSG00000277194.bed"
-sno_df = pd.read_csv(sno_interaction, sep='\t')
-sno_bed = BedTool.from_dataframe(sno_df)
+gene_interaction = "/home/kristinasong/Desktop/interactions/snoGloBe/ENSG00000277194.bed"
+gene_df = pd.read_csv(gene_interaction, sep='\t')
+gene_bed = BedTool.from_dataframe(gene_df)
 
 
 def parse_splicing_df(df,type):
@@ -71,7 +71,7 @@ def get_full_entry(bed_df,org_df):
 
 
 """
-For each splicing event type, get splicing events bound by a snoRNA
+For each splicing event type, get splicing events bound by a specific gene
 """
 for event in SPLICING_EVENTS:
     file = os.path.join(rmats_dir, event)
@@ -81,7 +81,7 @@ for event in SPLICING_EVENTS:
     padded_df = pad_splicing_events(df_parsed)
     padded_bed = BedTool.from_dataframe(padded_df)
 
-    intersection_df = padded_bed.intersect(sno_bed,s=True,u=True).to_dataframe(disable_auto_names=True, names=['chr','start','end','ID','score','strand'])
-    sno_name = os.path.basename(sno_interaction).split(".")[0]
-    outfile = os.path.join(rmats_dir, event_type+"_"+sno_name+".tsv")
+    intersection_df = padded_bed.intersect(gene_bed,s=True,u=True).to_dataframe(disable_auto_names=True, names=['chr','start','end','ID','score','strand'])
+    gene_name = os.path.basename(gene_interaction).split(".")[0]
+    outfile = os.path.join(rmats_dir, event_type+"_"+gene_name+".tsv")
     get_full_entry(intersection_df, pd.read_csv(file, sep='\t')).to_csv(outfile,sep='\t',index=None)
