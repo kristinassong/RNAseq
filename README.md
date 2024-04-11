@@ -22,7 +22,7 @@ OR
 snakemake --profile profile_local
 ```
 
-### Steps
+## Steps
 1. Trimming: [Trimmomatic](http://www.usadellab.org/cms/?page=trimmomatic)
 2. Read mapping: [Kallisto](https://pachterlab.github.io/kallisto/), [STAR](https://www.ncbi.nlm.nih.gov/pmc/articles/PMC3530905/)
 3. Read quality check: [FastQC](https://www.bioinformatics.babraham.ac.uk/projects/fastqc/), Picard, PCA, [MultiQC](https://multiqc.info/docs/)
