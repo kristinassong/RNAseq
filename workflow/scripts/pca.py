@@ -27,11 +27,16 @@ principal_df['sample'] = df.index
 def legend_text(tuples):
     labels = []
     for t in tuples:
+        # GENERAL
+        labels.append(t[0])
+        # FOR ASO KD
+        """
         if 'NC' in t[0]:
             labels.append(t[0])
         else:
             snoKD = 'SNORD'+t[0]+'_ASO'+str(t[1])
             labels.append(snoKD)
+        """
     return labels
 
 # Add condition and sample information to the PCA dataframe
@@ -41,10 +46,17 @@ principal_df['label'] = legend_text(tup)
 
 var1, var2 = round(pca.explained_variance_ratio_[0], 4) * 100, round(pca.explained_variance_ratio_[1], 4) * 100
 
-# Create color palette for the samples
+# Create color palette for the samples --> MODIFY AS NEEDED
 def color_palette(labels):
     palette = []
     for l in labels:
+        # OVE
+        if 'Empty' in l and 'dimgray' not in palette:
+            palette.append('dimgray')
+        else:
+            palette.append('salmon')
+        # FOR ASO KD
+        """
         if 'NC' in l and 'dimgray' not in palette:
             palette.append('dimgray')
         elif 'ASO1' in l and 'salmon' not in palette:
@@ -53,6 +65,7 @@ def color_palette(labels):
             palette.append('mediumseagreen')
         else:
             continue
+        """
     return palette
 
 # Create pca_plot function

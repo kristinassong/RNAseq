@@ -49,7 +49,7 @@ rule trimmomatic:
         "{output.r1} {output.unpaired_r1} "
         "{output.r2} {output.unpaired_r2} "
         "{params.trimmer} "
-        "&> {log}"
+        "2> {log}"
 
 
 rule fastqc_posttrim:

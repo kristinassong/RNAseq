@@ -1,11 +1,11 @@
-samples: ["NC5_n2_S6","NC5_n3_S1","22_1_n1_S2","22_2_n1_S3","22_1_n2_S7","22_2_n2_S8"]
+samples: ["SNORA81_EmptyPlasmid_1_S1","SNORA81_EmptyPlasmid_2_S3","SNORA81_EmptyPlasmid_3_S5","SNORD22_OVEPlasmid_1_S2","SNORD22_OVEPlasmid_2_S4","SNORD22_OVEPlasmid_3_S6"]
 
 path:
-  genome_fasta: "/home/kris98/scratch/annotation_datasets/Homo_sapiens.GRCh38.110.dna.primary_assembly.fa"
-  genome_gtf: "/home/kris98/scratch/annotation_datasets/Homo_sapiens.GRCh38.110_snoRNAs_tRNAs.gtf"
+  genome_fasta: "/home/kris98/projects/def-scottmic/kris98/annotation_datasets/Homo_sapiens.GRCh38.110.dna.primary_assembly.fa"
+  genome_gtf: "/home/kris98/projects/def-scottmic/kris98/annotation_datasets/Homo_sapiens.GRCh38.110_snoRNAs_tRNAs.gtf"
 
 params:
-  readlength: 76 # for rMATS
+  readlength: 80 # for rMATS
 
 tools:
   majiq_voila: "/home/kris98/scratch/RNAseq/workflow/envs/majiq_voila/bin/activate"
