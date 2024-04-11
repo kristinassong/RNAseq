@@ -1,9 +1,14 @@
 #!/usr/bin/env python
 
+"""
+Perform GO analysis on DE genes and visualize through a bar chart.
+"""
+
 import pandas as pd
 import numpy as np
 import matplotlib.pyplot as plt
 from gprofiler import GProfiler
+
 
 # Get list of genes
 genes = list(pd.read_csv(snakemake.input.genes, sep='\t')['gene'])

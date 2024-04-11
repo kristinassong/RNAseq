@@ -2,28 +2,30 @@
 
 ### Adapted from the script written by Danny Bergeron
 
+"""
+Create a volcano plot to show DE genes identified by DESeq2.
+"""
+
 import pandas as pd
 import seaborn as sns
 import matplotlib.pyplot as plt
 from gtfparse import read_gtf
 import numpy as np
 
-# Get list of genes after TPM filtering
-genes_file = snakemake.input.filtered_genes
-genes = pd.read_csv(genes_file, sep='\t', usecols=['gene'])
 
 # Configure comparison, pval_threshold and colors
 comp1, comp2 = str(snakemake.wildcards.comp).split('-')
 
+# For ASO KD
+"""
 if 'NC' not in comp1:
         comp1 = 'SNORD'+comp1+' KD'
 if 'NC' not in comp2:
         comp2 = 'SNORD'+comp2+' KD'
+"""
 
-#DE_tool, quantifier = str(snakemake.wildcards.DE_tool), str(snakemake.wildcards.quant)
 pval_threshold = snakemake.params.pval_threshold
-#colors = {'|log2FC| > 1 & padj < '+str(pval_threshold): 'blue','n.s.': 'grey'}
-colors = {'log2FC < -1 & padj < '+str(pval_threshold): 'cornflowerblue','log2FC > 1 & padj < '+str(pval_threshold): 'firebrick','n.s.': 'grey'}
+colors = {'log2FC < -1 & padj < '+ str(pval_threshold): 'cornflowerblue','log2FC > 1 & padj < '+ str(pval_threshold): 'firebrick','n.s.': 'grey'}
 
 # Load DE df
 df = pd.read_csv(snakemake.input.DE_output)
@@ -34,19 +36,17 @@ df.set_axis(['gene','baseMean','log2FoldChange','lfcSE','stat','pvalue','padj'],
 # Drop genes/transcripts with NaN in log2FoldChange, pvalue and/or padj
 df = df.dropna(subset=['log2FoldChange', 'pvalue', 'padj'])
 
-# Drop genes that are not in the TPM filtered list
-df = df[df.gene.isin(genes.gene)] 
-
 # Filter genes by biotype
-# only keep protein coding genes
-gtf = snakemake.input.gtf
+# Only keep protein coding genes
+gtf = snakemake.params.gtf
 df_gtf = read_gtf(gtf)
+df_gtf = df_gtf[df_gtf.gene_type=='protein_coding']
 df = df[df.gene.isin(df_gtf.gene_id)]
 
 # Create -log10padj column
 df['-log10padj'] = -np.log10(df['padj'])
 
-# Create hue column for significative points (|log2FC| > 1 & padj<0.05)
+# Create hue column for significant points (|log2FC|>1 & padj<0.05)
 df.loc[(df['padj'] < pval_threshold) & (df['log2FoldChange'] > 1),
         'sig.'] = 'log2FC > 1 & padj < '+str(pval_threshold)
 df.loc[(df['padj'] < pval_threshold) & (df['log2FoldChange'] < -1),
@@ -59,9 +59,9 @@ outfile_down = snakemake.output.down_genes
 df_genes = df[~df['sig.'].str.contains('n.s.')]
 df_genes = df_genes[['gene','log2FoldChange','padj']]
 
-up = df_genes[df_genes['log2FoldChange']>0]
+up = df_genes[(df_genes['log2FoldChange'] > 1) & (df_genes['padj'] < pval_threshold)]
 up.sort_values('log2FoldChange',inplace=True,ascending=False)
-down = df_genes[df_genes['log2FoldChange']<0]
+down = df_genes[df_genes['log2FoldChange'] < -1 & (df_genes['padj'] < pval_threshold)]
 down.sort_values('log2FoldChange',inplace=True,ascending=False)
 up.to_csv(outfile_up, sep='\t', index=False)
 down.to_csv(outfile_down, sep='\t', index=False)
