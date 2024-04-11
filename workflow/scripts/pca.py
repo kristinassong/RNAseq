@@ -51,7 +51,7 @@ def color_palette(labels):
     palette = []
     for l in labels:
         # OVE
-        if 'Empty' in l and 'dimgray' not in palette:
+        if 'Lipo' in l and 'dimgray' not in palette:
             palette.append('dimgray')
         else:
             palette.append('salmon')

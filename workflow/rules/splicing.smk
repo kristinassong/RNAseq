@@ -44,12 +44,12 @@ rule rmats_paired:
 
 rule filter_rmats:
     input:
-        summary = rules.rmats.output.summary
+        summary = rules.rmats.output.summary,
+        tpm = rules.merge_kallisto_quant.output.tpm
     output:
         result = 'results/rmats/{comp}/filtered/SE.tsv'
     params:
         dir = directory("results/rmats/{comp}"),
-        tpm = rules.merge_kallisto_quant.output.tpm,
         gtf = config["path"]["genome_gtf"],
         fdr = 0.01,
         deltapsi = 0.10
@@ -63,12 +63,12 @@ rule filter_rmats:
 
 rule filter_rmats_paired:
     input:
-        summary = rules.rmats_paired.output.summary
+        summary = rules.rmats_paired.output.summary,
+        tpm = rules.merge_kallisto_quant.output.tpm
     output:
         result = 'results/rmats_paired/{comp}/filtered/SE.tsv'
     params:
         dir = directory("results/rmats_paired/{comp}"),
-        tpm = rules.merge_kallisto_quant.output.tpm,
         gtf = config["path"]["genome_gtf"],
         fdr = 0.01,
         deltapsi = 0.10

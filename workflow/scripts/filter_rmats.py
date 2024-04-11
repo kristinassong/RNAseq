@@ -11,7 +11,7 @@ SPLICING_EVENTS = ['SE.MATS.JC.txt','A5SS.MATS.JC.txt','A3SS.MATS.JC.txt','MXE.M
 
 raw_dir = snakemake.params.dir+"/raw" # rmats output dir
 out_dir = snakemake.params.dir+"/filtered" # filtered rmats output dir
-tpm = snakemake.params.tpm # kallisto tpm matrix
+tpm = snakemake.input.tpm # kallisto tpm matrix
 tpm_df = pd.read_csv(tpm,sep='\t')
 fdr = snakemake.params.fdr
 deltapsi = snakemake.params.deltapsi

@@ -15,7 +15,7 @@ SAMPLES = config["samples"]
 
 df = pd.read_csv('resources/comparisons.tsv', sep=r'\s+')
 comparisons = ["%s-%s" % (cdn1,cdn2) for [cdn1, cdn2] in df.values.tolist()]
-#comparisons_full = [f'results/deseq2/{cdn1}-{cdn2}.csv' for cdn1, cdn2 in df.values.tolist()]
+comparisons_full = [f'results/deseq2/{cdn1}-{cdn2}.csv' for cdn1, cdn2 in df.values.tolist()]
 
 df_cond = pd.read_csv('resources/design.tsv', sep=r'\s+', usecols=['sample','condition'])
 conditions = df_cond['condition'].unique().tolist()
@@ -38,18 +38,14 @@ include: "rules/splicing.smk"
 
 
 #### COMPLETE
-#volcano_plot = expand("results/volcano_plot/{comp}.svg", comp=comparisons)
-#sig_diffexp_genes = expand("results/volcano_plot/{comp}_sig_diffexp_genes_{change}.tsv", comp=comparisons, change=['up','down'])
-#splicing_events = expand("results/voila/deltapsi/event_types/{comp}/filtered/bar_chart.svg", comp=comparisons)
-#rmats = expand('results/rmats/{comp}/filtered/SE_EFTUD2.tsv', comp=comparisons)
+#volcano_plot = expand("results/deseq2/{comp}.svg", comp=comparisons)
 
 #### NEED INTERNET CONNECTION
-#GO_bar_charts = expand("results/GO/GO_{comp}_{change}regulated_genes.svg", comp=comparisons, change=['up','down'])
+#GO = expand("results/GO/GO_{comp}_{change}.svg", comp=comparisons, change=['up','down'])
 
 rule all:
     input:
-        #fastqc = expand("results/fastqc/{step}/{sample}_{read}_fastqc.html", sample=SAMPLES, read=["R1","R2"], step=["pretrim","posttrim"]),
-        #bedgraphs = expand("results/genomecov/{sample}.bedgraph", sample=SAMPLES),
-        #rMATS = expand('results/rmats/{comp}/filtered/SE.tsv', comp=comparisons),
-        #pca = expand("results/pca/pca_{comp}.svg", comp=comparisons), # pca.py script specific for NC vs KD conditions; Modify as needed
-        #picard_files = expand("results/picard/{sample}.isize.pdf", sample=SAMPLES),
+        bedgraphs = expand("results/genomecov/{sample}.bedgraph", sample=SAMPLES),
+        rMATS = expand('results/rmats/{comp}/filtered/SE.tsv', comp=comparisons),
+        pca = expand("results/pca/pca_{comp}.svg", comp=comparisons), # pca.py script specific for NC vs KD conditions; Modify as needed,
+        multiqc = "results/multiqc/multiqc_report.html"

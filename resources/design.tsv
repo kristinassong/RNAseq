@@ -1,7 +1,8 @@
-sample  condition   ASO
-SNORA81_EmptyPlasmid_1_S1   SNORA81_EmptyPlasmid    0
-SNORA81_EmptyPlasmid_2_S3   SNORA81_EmptyPlasmid    0
-SNORA81_EmptyPlasmid_3_S5   SNORA81_EmptyPlasmid    0
-SNORD22_OVEPlasmid_1_S2 SNORD22_OVEPlasmid  0
-SNORD22_OVEPlasmid_2_S4 SNORD22_OVEPlasmid  0
-SNORD22_OVEPlasmid_3_S6 SNORD22_OVEPlasmid  0
+sample	condition	ASO
+SKOV_FAV_LF	Lipo	0
+SKOV_FAV_pcDNA3	Lipo	0
+SKOV3ip1_Lipofectamin_n1	Lipo	0
+SKOV3ip1_Lipofectamin_n2	Lipo	0
+NC5_n1_S1	NC5	0
+NC5_n2_S6	NC5	0
+NC5_n3_S1	NC5	0
