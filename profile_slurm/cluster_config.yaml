@@ -19,3 +19,7 @@ star_index:
 star_align:
   mem: 128000M
   cpus-per-task: 32
+  time: 600
+
+kallisto_quant:
+  time: 600
