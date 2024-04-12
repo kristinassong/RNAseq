@@ -10,7 +10,7 @@ library(DESeq2)
 
 # Variables coming from the snakemake
 kallisto_dir <- snakemake@params[["kallisto_dir"]]
-output_dir <- snakemake@output[["results"]]
+output_dir <- snakemake@params[["results"]]
 design_file <- snakemake@input[["samples"]]
 comparison_file <- snakemake@input[["comparisons"]]
 transcript_gene_file <- snakemake@input[["gene_id"]]

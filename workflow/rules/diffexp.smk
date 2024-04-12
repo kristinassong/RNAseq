@@ -9,7 +9,8 @@ rule deseq2:
     output:
         out_files = "results/deseq2/{comp}.csv"
     params:
-        kallisto_dir = "results/kallisto"
+        kallisto_dir = "results/kallisto",
+        out_dir = "results/deseq2"
     conda:
         "../envs/deseq2.yaml"
     message:
