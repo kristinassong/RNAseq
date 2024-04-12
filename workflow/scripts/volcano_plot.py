@@ -31,7 +31,7 @@ colors = {'log2FC < -1 & padj < '+ str(pval_threshold): 'cornflowerblue','log2FC
 df = pd.read_csv(snakemake.input.DE_output)
 
 # Rename columns
-df.set_axis(['gene','baseMean','log2FoldChange','lfcSE','stat','pvalue','padj'], axis=1, inplace=True)
+df = df.set_axis(['gene','baseMean','log2FoldChange','lfcSE','stat','pvalue','padj'], axis=1)
 
 # Drop genes/transcripts with NaN in log2FoldChange, pvalue and/or padj
 df = df.dropna(subset=['log2FoldChange', 'pvalue', 'padj'])
@@ -39,9 +39,10 @@ df = df.dropna(subset=['log2FoldChange', 'pvalue', 'padj'])
 # Filter genes by biotype
 # Only keep protein coding genes
 gtf = snakemake.params.gtf
-df_gtf = read_gtf(gtf)
-df_gtf = df_gtf[df_gtf.gene_type=='protein_coding']
+df_gtf = read_gtf(gtf).to_pandas()
+df_gtf = df_gtf[df_gtf['gene_biotype']=='protein_coding']
 df = df[df.gene.isin(df_gtf.gene_id)]
+print(len(df))
 
 # Create -log10padj column
 df['-log10padj'] = -np.log10(df['padj'])
@@ -51,6 +52,7 @@ df.loc[(df['padj'] < pval_threshold) & (df['log2FoldChange'] > 1),
         'sig.'] = 'log2FC > 1 & padj < '+str(pval_threshold)
 df.loc[(df['padj'] < pval_threshold) & (df['log2FoldChange'] < -1),
         'sig.'] = 'log2FC < -1 & padj < '+str(pval_threshold)
+df['sig.'] = df['sig.'].replace('nan','n.s.')
 df['sig.'] = df['sig.'].fillna('n.s.')
 
 # Extract genes that are significant
@@ -60,9 +62,11 @@ df_genes = df[~df['sig.'].str.contains('n.s.')]
 df_genes = df_genes[['gene','log2FoldChange','padj']]
 
 up = df_genes[(df_genes['log2FoldChange'] > 1) & (df_genes['padj'] < pval_threshold)]
+print(len(up))
 up.sort_values('log2FoldChange',inplace=True,ascending=False)
 down = df_genes[df_genes['log2FoldChange'] < -1 & (df_genes['padj'] < pval_threshold)]
 down.sort_values('log2FoldChange',inplace=True,ascending=False)
+print(len(down))
 up.to_csv(outfile_up, sep='\t', index=False)
 down.to_csv(outfile_down, sep='\t', index=False)
 

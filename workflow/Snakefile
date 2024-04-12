@@ -42,5 +42,5 @@ rule all:
         pca = expand("results/pca/pca_{comp}.svg", comp=comparisons), # pca.py script specific for NC vs KD conditions; Modify as needed,
         multiqc = "results/multiqc/multiqc_report.html",
         volcano_plot = expand("results/deseq2/{comp}.svg", comp=comparisons),
-        #rMATS_paired = expand('results/rmats_paired/{comp}/filtered/SE.tsv', comp=comparisons),
-        #GO = expand("results/GO/GO_{comp}_{change}.svg", comp=comparisons, change=['up','down']) # NEED INTERNET CONNECTION
+        GO = expand("results/GO/GO_{comp}_{change}.svg", comp=comparisons, change=['up','down']) # NEED INTERNET CONNECTION
+        #rMATS_paired = expand('results/rmats_paired/{comp}/filtered/SE.tsv', comp=comparisons)
