@@ -3,12 +3,11 @@
 rule deseq2:
     input:
         quant = expand(rules.kallisto_quant.output, sample=SAMPLES),
-        samples = "data/design.tsv",
-        comparisons = "data/comparisons.tsv",
+        samples = "resources/design.tsv",
+        comparisons = "resources/comparisons.tsv",
         gene_id = rules.tx2gene.output.tsv
     output:
-        results = directory("results/deseq2"),
-        out_files = comparisons_full
+        out_files = "results/deseq2/{comp}.csv"
     params:
         kallisto_dir = "results/kallisto"
     conda:
@@ -21,8 +20,7 @@ rule deseq2:
 
 rule volcano_plot:
     input:
-        DE_outdir = rules.deseq2.output.results,
-        DE_output = "results/deseq2/{comp}.csv",
+        DE_output = rules.deseq2.output.out_files,
         filtered_genes = rules.merge_kallisto_quant.output.tpm,
     output:
         volcano = "results/deseq2/{comp}.svg",
