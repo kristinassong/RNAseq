@@ -42,6 +42,7 @@ gtf = snakemake.params.gtf
 df_gtf = read_gtf(gtf).to_pandas()
 df_gtf = df_gtf[df_gtf['gene_biotype']=='protein_coding']
 df = df[df.gene.isin(df_gtf.gene_id)]
+print("Total # of protein-coding DE genes")
 print(len(df))
 
 # Create -log10padj column
@@ -62,10 +63,12 @@ df_genes = df[~df['sig.'].str.contains('n.s.')]
 df_genes = df_genes[['gene','log2FoldChange','padj']]
 
 up = df_genes[(df_genes['log2FoldChange'] > 1) & (df_genes['padj'] < pval_threshold)]
+print("Total # of significant upregulated protein-coding genes")
 print(len(up))
 up.sort_values('log2FoldChange',inplace=True,ascending=False)
 down = df_genes[df_genes['log2FoldChange'] < -1 & (df_genes['padj'] < pval_threshold)]
 down.sort_values('log2FoldChange',inplace=True,ascending=False)
+print("Total # of significant downregulated protein-coding genes")
 print(len(down))
 up.to_csv(outfile_up, sep='\t', index=False)
 down.to_csv(outfile_down, sep='\t', index=False)
