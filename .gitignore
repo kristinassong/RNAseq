@@ -1,6 +1,4 @@
 results/
-results_old/
-workflow/scripts/filter_rmats_old.py
 
 resources/samples/
 resources/transcriptome.fa
@@ -8,8 +6,3 @@ resources/tx2gene.tsv
 
 .DS_Store
 .snakemake/
-
-# MAJIQ and VOILA requirements
-workflow/envs/htslib-1.9.tar.bz2
-workflow/envs/htslib-1.9/
-workflow/envs/majiq_voila/
