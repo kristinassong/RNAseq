@@ -5,10 +5,9 @@
 import pandas as pd
 import seaborn as sns
 import matplotlib.pyplot as plt
-import numpy as np
 from sklearn.decomposition import PCA
 from sklearn.preprocessing import StandardScaler
-import re
+
 
 df = pd.read_csv(snakemake.input.tpm, sep='\t', index_col='gene')
 df = df.drop(columns=['transcript', 'gene_name'])
@@ -24,49 +23,17 @@ principal_df = pd.DataFrame(data = principal_components, columns = ['PC1', 'PC2'
 principal_df['sample'] = df.index
 
 # Modify labels for legend
-def legend_text(tuples):
+def legend_text(design,principal_df):
     labels = []
-    for t in tuples:
-        # GENERAL
-        labels.append(t[0])
-        # FOR ASO KD
-        """
-        if 'NC' in t[0]:
-            labels.append(t[0])
-        else:
-            snoKD = 'SNORD'+t[0]+'_ASO'+str(t[1])
-            labels.append(snoKD)
-        """
+    for s in principal_df['sample'].values.tolist():
+        labels.append(design[design['sample']==s].iloc[0]['condition'])
     return labels
 
 # Add condition and sample information to the PCA dataframe
 design = pd.read_csv(snakemake.params.design, sep='\s+')
-tup = design[['condition','ASO']].apply(tuple, axis=1)
-principal_df['label'] = legend_text(tup)
+principal_df['label'] = legend_text(design,principal_df)
 
 var1, var2 = round(pca.explained_variance_ratio_[0], 4) * 100, round(pca.explained_variance_ratio_[1], 4) * 100
-
-# Create color palette for the samples --> MODIFY AS NEEDED
-def color_palette(labels):
-    palette = []
-    for l in labels:
-        # OVE
-        if 'Lipo' in l and 'dimgray' not in palette:
-            palette.append('dimgray')
-        else:
-            palette.append('salmon')
-        # FOR ASO KD
-        """
-        if 'NC' in l and 'dimgray' not in palette:
-            palette.append('dimgray')
-        elif 'ASO1' in l and 'salmon' not in palette:
-            palette.append('salmon')
-        elif 'ASO2' in l and 'mediumseagreen' not in palette:
-            palette.append('mediumseagreen')
-        else:
-            continue
-        """
-    return palette
 
 # Create pca_plot function
 def pca_plot(df, x_col, y_col, hue_col, xlabel, ylabel, title, path, **kwargs):
@@ -78,7 +45,7 @@ def pca_plot(df, x_col, y_col, hue_col, xlabel, ylabel, title, path, **kwargs):
     plt.rcParams["legend.loc"] = 'upper right'
 
     plt.suptitle(title, fontsize=16)
-    sns.scatterplot(data=df, x=x_col, y=y_col, hue=hue_col, palette=color_palette(df[hue_col]), edgecolor='face',
+    sns.scatterplot(data=df, x=x_col, y=y_col, hue=hue_col, edgecolor='face',
                     alpha=0.7, s=50, **kwargs)
 
     plt.xticks(fontsize=14)
