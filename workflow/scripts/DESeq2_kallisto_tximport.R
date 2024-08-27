@@ -1,5 +1,7 @@
 # https://bioconductor.org/packages/3.7/bioc/vignettes/tximport/inst/doc/tximport.html#use-with-downstream-bioconductor-dge-packages
+
 ### Script written by Danny Bergeron
+
 
 #############################################################
 #----------------- Loading the librairies -------------------
@@ -17,6 +19,7 @@ transcript_gene_file <- snakemake@input[["gene_id"]]
 
 # create the directory that will contain the results
 dir.create(output_dir, showWarnings=FALSE)
+
 
 #############################################################
 #------------- Importing data and information ---------------
@@ -79,8 +82,8 @@ for (row in 1:nrow(comparisons)) {
         dds,
         contrast = c(
             "condition",
-            condition2,
-            condition1
+            condition1,
+            condition2
         ),
         #pAdjustMethod = "fdr"
     )

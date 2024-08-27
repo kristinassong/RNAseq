@@ -1,1 +1,1 @@
-results/STAR/SKOV_FAV_LF/SKOV_FAV_LF_Aligned.sortedByCoord.out.primary.bam,results/STAR/SKOV_FAV_pcDNA3/SKOV_FAV_pcDNA3_Aligned.sortedByCoord.out.primary.bam,results/STAR/SKOV3ip1_Lipofectamin_n1/SKOV3ip1_Lipofectamin_n1_Aligned.sortedByCoord.out.primary.bam,results/STAR/SKOV3ip1_Lipofectamin_n2/SKOV3ip1_Lipofectamin_n2_Aligned.sortedByCoord.out.primary.bam
+results/STAR/N1_SNORD22/N1_SNORD22_Aligned.sortedByCoord.out.primary.bam,results/STAR/N2_SNORD22/N2_SNORD22_Aligned.sortedByCoord.out.primary.bam

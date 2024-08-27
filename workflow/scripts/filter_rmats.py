@@ -29,7 +29,7 @@ def filter_by_threshold(df,fdr,deltapsi):
     Filter rMATS output by FDR and IncLevelDifference
     """
     filtered_df = df[df['FDR']<=fdr]
-    filtered_df = filtered_df[filtered_df['IncLevelDifference'].abs()>=deltapsi]
+    filtered_df = filtered_df[filtered_df['IncLevelDifference'].abs()>deltapsi]
     return filtered_df
 
 
@@ -48,7 +48,7 @@ def filter_by_tpm(rmats_df,tpm_df):
     all_genes = set(rmats_df['GeneID'].values.tolist())
     
     for gene in all_genes:
-        gene_tpm_df = tpm_df[tpm_df['gene']==gene]
+        gene_tpm_df = exp_tpm_df[exp_tpm_df['gene']==gene]
         if len(gene_tpm_df)>0 and gene in pc_genes_list:
             gene_rmats_df = rmats_df[rmats_df['GeneID']==gene]
             filtered_rmats_df = pd.concat([filtered_rmats_df,gene_rmats_df],ignore_index=True)

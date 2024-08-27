@@ -1,8 +1,8 @@
-samples: ['SKOV_FAV_LF','SKOV_FAV_pcDNA3','SKOV3ip1_Lipofectamin_n1','SKOV3ip1_Lipofectamin_n2','NC5_n1_S1','NC5_n2_S6','NC5_n3_S1']
+samples: ['N1_pcDNA','N1_SNORD22','N2_pcDNA','N2_SNORD22']
 
 path:
   genome_fasta: "/home/kris98/projects/def-scottmic/kris98/annotation_datasets/Homo_sapiens.GRCh38.110.dna.primary_assembly.fa"
   genome_gtf: "/home/kris98/projects/def-scottmic/kris98/annotation_datasets/Homo_sapiens.GRCh38.110_snoRNAs_tRNAs.gtf"
 
 params:
-  readlength: 76 # for rMATS
+  readlength: 80 # for rMATS

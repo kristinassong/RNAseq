@@ -16,14 +16,6 @@ import numpy as np
 # Configure comparison, pval_threshold and colors
 comp1, comp2 = str(snakemake.wildcards.comp).split('-')
 
-# For ASO KD
-"""
-if 'NC' not in comp1:
-        comp1 = 'SNORD'+comp1+' KD'
-if 'NC' not in comp2:
-        comp2 = 'SNORD'+comp2+' KD'
-"""
-
 pval_threshold = snakemake.params.pval_threshold
 colors = {'log2FC < -1 & padj < '+ str(pval_threshold): 'cornflowerblue','log2FC > 1 & padj < '+ str(pval_threshold): 'firebrick','n.s.': 'grey'}
 
@@ -43,6 +35,20 @@ df_gtf = read_gtf(gtf).to_pandas()
 df_gtf = df_gtf[df_gtf['gene_biotype']=='protein_coding']
 df = df[df.gene.isin(df_gtf.gene_id)]
 print("Total # of protein-coding DE genes")
+print(len(df))
+
+# Filter genes by TPM
+tpm = snakemake.input.tpm # kallisto tpm matrix
+tpm_df = pd.read_csv(tpm,sep='\t')
+
+# Drop all rows in tpm_df where max TPM<1
+samples = tpm_df.columns.values.tolist()
+for i in ['gene','transcript','gene_name']:
+        samples.remove(i)
+exp_tpm_df = tpm_df[~((tpm_df[samples]<1).all(axis=1))]
+
+df = df[df.gene.isin(exp_tpm_df.gene)]
+print("Total # of expressed protein-coding DE genes")
 print(len(df))
 
 # Create -log10padj column

@@ -1,8 +1,5 @@
-sample	condition	ASO
-SKOV_FAV_LF	Lipo	0
-SKOV_FAV_pcDNA3	Lipo	0
-SKOV3ip1_Lipofectamin_n1	Lipo	0
-SKOV3ip1_Lipofectamin_n2	Lipo	0
-NC5_n1_S1	NC5	0
-NC5_n2_S6	NC5	0
-NC5_n3_S1	NC5	0
+sample	condition
+N1_pcDNA	pcDNA
+N2_pcDNA    pcDNA
+N1_SNORD22	SNORD22_OVE
+N2_SNORD22	SNORD22_OVE

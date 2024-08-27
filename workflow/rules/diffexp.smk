@@ -23,6 +23,7 @@ rule volcano_plot:
     input:
         DE_output = rules.deseq2.output.out_files,
         filtered_genes = rules.merge_kallisto_quant.output.tpm,
+        tpm = rules.merge_kallisto_quant.output.tpm
     output:
         volcano = "results/deseq2/{comp}.svg",
         up_genes = "results/deseq2/{comp}_sig_DE_up.tsv",
@@ -36,29 +37,3 @@ rule volcano_plot:
         "Create a volcano plot using deseq2 output for {wildcards.comp}."
     script:
         "../scripts/volcano_plot.py"
-
-
-rule GO_upregulated_genes:
-    input:
-        genes = rules.volcano_plot.output.up_genes
-    output:
-        bar_chart = "results/GO/GO_{comp}_up.svg"
-    conda: 
-        "../envs/GO.yaml"
-    message:
-        "GO analysis of upregulated genes in {wildcards.comp} represented as a bar chart."
-    script:
-        "../scripts/GO_bar_charts.py"
-
-
-rule GO_downregulated_genes:
-    input:
-        genes = rules.volcano_plot.output.down_genes
-    output:
-        bar_chart = "results/GO/GO_{comp}_down.svg"
-    conda: 
-        "../envs/GO.yaml"
-    message:
-        "GO analysis of downregulated genes in {wildcards.comp} represented as a bar chart."
-    script:
-        "../scripts/GO_bar_charts.py"
