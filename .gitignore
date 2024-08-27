@@ -3,6 +3,7 @@ results/
 resources/samples/
 resources/transcriptome.fa
 resources/tx2gene.tsv
+resources/rmats-turbo/
 
 .DS_Store
 .snakemake/
