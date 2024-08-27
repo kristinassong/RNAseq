@@ -21,12 +21,12 @@ rule multiqc:
         picard = expand(rules.picard.output.pdf,sample=SAMPLES),
         kallisto = expand(rules.kallisto_quant.output,sample=SAMPLES)
     output:
-        html = "results/multiqc/multiqc_report.html"
+        html = "results/multiqc/{comp}/multiqc_report.html"
     params:
         scan_dir = "results/fastqc/pretrim results/fastqc/posttrim results/STAR/*/*Log.final.out results/logs/kallisto results/picard results/logs/trimmomatic",
-        outdir = directory("results/multiqc")
+        outdir = directory("results/multiqc/{comp}")
     log:
-        "results/logs/multiqc.log"
+        "results/logs/multiqc_{comp}.log"
     conda:
         "../envs/fastqc.yaml"
     message:
