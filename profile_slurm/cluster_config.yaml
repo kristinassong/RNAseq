@@ -23,3 +23,6 @@ star_align:
 
 kallisto_quant:
   time: 600
+
+rmats_paired:
+  time: 1440
