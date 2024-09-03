@@ -5,6 +5,7 @@ import shutil
 import argparse
 import os
 from gtfparse import read_gtf
+import numpy as np
 
 
 SPLICING_EVENTS = ['SE.MATS.JC.txt','A5SS.MATS.JC.txt','A3SS.MATS.JC.txt','MXE.MATS.JC.txt','RI.MATS.JC.txt']
@@ -15,6 +16,7 @@ tpm = snakemake.input.tpm # kallisto tpm matrix
 tpm_df = pd.read_csv(tpm,sep='\t')
 fdr = snakemake.params.fdr
 deltapsi = snakemake.params.deltapsi
+rc = snakemake.params.rc
 gtf = snakemake.params.gtf
 
 
@@ -24,12 +26,24 @@ id_biotype = df_gtf[['gene_id','gene_biotype']].to_pandas().drop_duplicates(igno
 pc_genes_list = id_biotype[id_biotype['gene_biotype']=='protein_coding'].gene_id.tolist()
 
 
-def filter_by_threshold(df,fdr,deltapsi):
+def filter_by_readcounts(df,rc):
+    """
+    Keep events with average RNA-seq read count>=threshold in both sample groups
+    """
+    for col in ['IJC_SAMPLE_1','SJC_SAMPLE_1','IJC_SAMPLE_2','SJC_SAMPLE_2']:
+        df[col+'_avg'] = df[col].str.split(',').apply(lambda x: np.mean([int(i) for i in x]))
+    df = df[((df['IJC_SAMPLE_1_avg']>=rc) | (df['SJC_SAMPLE_1_avg']>=rc)) & ((df['IJC_SAMPLE_2_avg']>=rc) | (df['SJC_SAMPLE_2_avg']>=rc))]
+    df.drop(columns=['IJC_SAMPLE_1_avg','SJC_SAMPLE_1_avg','IJC_SAMPLE_2_avg','SJC_SAMPLE_2_avg'],inplace=True)
+    return df
+
+
+def filter_by_threshold(df,fdr,deltapsi,rc):
     """
     Filter rMATS output by FDR and IncLevelDifference
     """
-    filtered_df = df[df['FDR']<=fdr]
-    filtered_df = filtered_df[filtered_df['IncLevelDifference'].abs()>deltapsi]
+    filtered_df = filter_by_readcounts(df,rc)
+    filtered_df = filtered_df[filtered_df['FDR']<=fdr]
+    filtered_df = filtered_df[filtered_df['IncLevelDifference'].abs()>=deltapsi]
     return filtered_df
 
 
@@ -63,7 +77,7 @@ for event in SPLICING_EVENTS:
     file = os.path.join(raw_dir, event)
     event_type = event.split(".")[0]
     df = pd.read_csv(file, sep='\t')
-    filtered_df = filter_by_threshold(df,fdr,deltapsi)
+    filtered_df = filter_by_threshold(df,fdr,deltapsi,rc)
     filtered_df = filter_by_tpm(filtered_df,tpm_df)
 
     # Splicing events filtered by threshold and TPM

@@ -29,8 +29,9 @@ rule filter_rmats:
     params:
         dir = directory("results/rmats/{comp}"),
         gtf = config["path"]["genome_gtf"],
-        fdr = 0.01, # recommended threshold: <=1%
-        deltapsi = 0.05 # recommended threshold: >5%
+        fdr = 0.1, # recommended threshold: <=1%
+        deltapsi = 0.05, # recommended threshold: >=5%
+        rc = 10 # recommended thershold: 10
     conda:
         "../envs/python.yaml"
     message:
@@ -87,8 +88,9 @@ rule filter_rmats_paired:
     params:
         dir = directory("results/rmats_paired/{comp}"),
         gtf = config["path"]["genome_gtf"],
-        fdr = 0.01, # recommended threshold: <=1%
-        deltapsi = 0.05 # recommended threshold: >5%
+        fdr = 0.1, # recommended threshold: <=1%
+        deltapsi = 0.05, # recommended threshold: >=5%
+        rc = 10 # recommended thershold: 10
     conda:
         "../envs/python.yaml"
     message:
