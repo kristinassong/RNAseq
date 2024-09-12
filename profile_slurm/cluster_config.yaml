@@ -1,5 +1,5 @@
 __default__:
-  account: def-scottmic
+  account: def-sabou
   mail-user: kristina.song@usherbrooke.ca
   mail-type: FAIL
   job-name: "smk_{rule}_{wildcards}"

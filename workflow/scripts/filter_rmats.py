@@ -17,6 +17,8 @@ tpm_df = pd.read_csv(tpm,sep='\t')
 fdr = snakemake.params.fdr
 deltapsi = snakemake.params.deltapsi
 rc = snakemake.params.rc
+bp_low = snakemake.params.basepsi_low
+bp_high = snakemake.params.basepsi_high
 gtf = snakemake.params.gtf
 
 
@@ -31,18 +33,32 @@ def filter_by_readcounts(df,rc):
     Keep events with average RNA-seq read count>=threshold in both sample groups
     """
     for col in ['IJC_SAMPLE_1','SJC_SAMPLE_1','IJC_SAMPLE_2','SJC_SAMPLE_2']:
-        df[col+'_avg'] = df[col].str.split(',').apply(lambda x: np.mean([int(i) for i in x]))
-    df = df[((df['IJC_SAMPLE_1_avg']>=rc) | (df['SJC_SAMPLE_1_avg']>=rc)) & ((df['IJC_SAMPLE_2_avg']>=rc) | (df['SJC_SAMPLE_2_avg']>=rc))]
-    df.drop(columns=['IJC_SAMPLE_1_avg','SJC_SAMPLE_1_avg','IJC_SAMPLE_2_avg','SJC_SAMPLE_2_avg'],inplace=True)
+        df[col+'_sum'] = df[col].str.split(',').apply(lambda x: np.sum([int(i) for i in x]))
+    df['avg_read_count_SAMPLE_1'] = (df['IJC_SAMPLE_1_sum'] + df['SJC_SAMPLE_1_sum'])/len(df.loc[0,'IJC_SAMPLE_1'].split(','))
+    df['avg_read_count_SAMPLE_2'] = (df['IJC_SAMPLE_2_sum'] + df['SJC_SAMPLE_2_sum'])/len(df.loc[0,'IJC_SAMPLE_2'].split(','))
+    df = df[(df['avg_read_count_SAMPLE_1']>=rc) & (df['avg_read_count_SAMPLE_2']>=rc)]
+    df.drop(columns=['IJC_SAMPLE_1_sum','SJC_SAMPLE_1_sum','IJC_SAMPLE_2_sum','SJC_SAMPLE_2_sum','avg_read_count_SAMPLE_1','avg_read_count_SAMPLE_2'],inplace=True)
     return df
 
 
-def filter_by_threshold(df,fdr,deltapsi,rc):
+def filter_by_basePSI(df,bp_low,bp_high):
+    """
+    Filter out events with average PSI <0.05 or >0.95 in both sample groups
+    """
+    for col in ['IncLevel1','IncLevel2']:
+        df[col+'_avg'] = df[col].str.split(',').apply(lambda x: np.mean([float(i) for i in x]))
+    df = df[(df['IncLevel1_avg']>=bp_low) & (df['IncLevel1_avg']<=bp_high) & (df['IncLevel2_avg']>=bp_low) & (df['IncLevel2_avg']<=bp_high)]
+    df.drop(columns=['IncLevel1_avg','IncLevel2_avg'],inplace=True)
+    return df
+
+
+def filter_by_threshold(df,fdr,deltapsi,rc,bp_low,bp_high):
     """
     Filter rMATS output by FDR and IncLevelDifference
     """
     filtered_df = filter_by_readcounts(df,rc)
     filtered_df = filtered_df[filtered_df['FDR']<=fdr]
+    #filtered_df = filter_by_basePSI(filtered_df,bp_low,bp_high)
     filtered_df = filtered_df[filtered_df['IncLevelDifference'].abs()>=deltapsi]
     return filtered_df
 
@@ -77,7 +93,7 @@ for event in SPLICING_EVENTS:
     file = os.path.join(raw_dir, event)
     event_type = event.split(".")[0]
     df = pd.read_csv(file, sep='\t')
-    filtered_df = filter_by_threshold(df,fdr,deltapsi,rc)
+    filtered_df = filter_by_threshold(df,fdr,deltapsi,rc,bp_low,bp_high)
     filtered_df = filter_by_tpm(filtered_df,tpm_df)
 
     # Splicing events filtered by threshold and TPM

@@ -22,7 +22,8 @@ rule rmats:
 
 rule filter_rmats:
     input:
-        summary = rules.rmats.output.summary,
+        #summary = rules.rmats.output.summary,
+        summary = 'results/rmats/SNORD22_OVE-pcDNA/raw/summary.txt',
         tpm = rules.merge_kallisto_quant.output.tpm
     output:
         result = 'results/rmats/{comp}/filtered/SE.tsv'
@@ -31,7 +32,9 @@ rule filter_rmats:
         gtf = config["path"]["genome_gtf"],
         fdr = 0.1, # recommended threshold: <=1%
         deltapsi = 0.05, # recommended threshold: >=5%
-        rc = 10 # recommended thershold: 10
+        rc = 10, # recommended thershold: 10
+        basepsi_low = 0.05, # recommended thershold: 0.05
+        basepsi_high = 0.95 # recommended thershold: 0.95
     conda:
         "../envs/python.yaml"
     message:
@@ -81,7 +84,8 @@ rule rmats_paired:
 
 rule filter_rmats_paired:
     input:
-        summary = rules.rmats_paired.output.summary,
+        #summary = rules.rmats_paired.output.summary,
+        summary = 'results/rmats_paired/SNORD22_OVE-pcDNA/raw/summary.txt',
         tpm = rules.merge_kallisto_quant.output.tpm
     output:
         result = 'results/rmats_paired/{comp}/filtered/SE.tsv'
@@ -90,7 +94,9 @@ rule filter_rmats_paired:
         gtf = config["path"]["genome_gtf"],
         fdr = 0.1, # recommended threshold: <=1%
         deltapsi = 0.05, # recommended threshold: >=5%
-        rc = 10 # recommended thershold: 10
+        rc = 10, # recommended thershold: 10
+        basepsi_low = 0.05, # recommended thershold: 0.05
+        basepsi_high = 0.95 # recommended thershold: 0.95
     conda:
         "../envs/python.yaml"
     message:
