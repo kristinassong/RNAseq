@@ -22,15 +22,14 @@ rule rmats:
 
 rule filter_rmats:
     input:
-        #summary = rules.rmats.output.summary,
-        summary = 'results/rmats/SNORD22_OVE-pcDNA/raw/summary.txt',
+        summary = rules.rmats.output.summary,
         tpm = rules.merge_kallisto_quant.output.tpm
     output:
         result = 'results/rmats/{comp}/filtered/SE.tsv'
     params:
         dir = directory("results/rmats/{comp}"),
         gtf = config["path"]["genome_gtf"],
-        fdr = 0.1, # recommended threshold: <=1%
+        fdr = 0.05, # recommended threshold: <=5%
         deltapsi = 0.05, # recommended threshold: >=5%
         rc = 10, # recommended thershold: 10
         basepsi_low = 0.05, # recommended thershold: 0.05
@@ -84,15 +83,14 @@ rule rmats_paired:
 
 rule filter_rmats_paired:
     input:
-        #summary = rules.rmats_paired.output.summary,
-        summary = 'results/rmats_paired/SNORD22_OVE-pcDNA/raw/summary.txt',
+        summary = rules.rmats_paired.output.summary,
         tpm = rules.merge_kallisto_quant.output.tpm
     output:
         result = 'results/rmats_paired/{comp}/filtered/SE.tsv'
     params:
         dir = directory("results/rmats_paired/{comp}"),
         gtf = config["path"]["genome_gtf"],
-        fdr = 0.1, # recommended threshold: <=1%
+        fdr = 0.05, # recommended threshold: <=5%
         deltapsi = 0.05, # recommended threshold: >=5%
         rc = 10, # recommended thershold: 10
         basepsi_low = 0.05, # recommended thershold: 0.05

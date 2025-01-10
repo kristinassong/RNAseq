@@ -26,3 +26,6 @@ kallisto_quant:
 
 rmats_paired:
   time: 1440
+
+trimmomatic:
+  time: 1440

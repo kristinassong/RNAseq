@@ -58,7 +58,7 @@ def filter_by_threshold(df,fdr,deltapsi,rc,bp_low,bp_high):
     """
     filtered_df = filter_by_readcounts(df,rc)
     filtered_df = filtered_df[filtered_df['FDR']<=fdr]
-    #filtered_df = filter_by_basePSI(filtered_df,bp_low,bp_high)
+    filtered_df = filter_by_basePSI(filtered_df,bp_low,bp_high)
     filtered_df = filtered_df[filtered_df['IncLevelDifference'].abs()>=deltapsi]
     return filtered_df
 

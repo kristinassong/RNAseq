@@ -5,4 +5,4 @@ path:
   genome_gtf: "/home/kris98/projects/def-scottmic/kris98/annotation_datasets/Homo_sapiens.GRCh38.110_snoRNAs_tRNAs.gtf"
 
 params:
-  readlength: 100 # for rMATS
+  readlength: 76 # for rMATS

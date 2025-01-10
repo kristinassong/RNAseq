@@ -39,7 +39,7 @@ rule all:
     input:
         bedgraphs = expand("results/genomecov/{sample}.bedgraph", sample=SAMPLES),
         pca = expand("results/pca/pca_{comp}.svg", comp=comparisons),
-        #multiqc = expand("results/multiqc/{comp}/multiqc_report.html", comp=comparisons),
+        multiqc = expand("results/multiqc/{comp}/multiqc_report.html", comp=comparisons),
         volcano_plot = expand("results/deseq2/{comp}.svg", comp=comparisons),
-        rMATS = expand('results/rmats/{comp}/filtered/SE.tsv', comp=comparisons),
-        #rMATS_paired = expand('results/rmats_paired/{comp}/filtered/SE.tsv', comp=comparisons)
+        rMATS = expand("results/rmats/{comp}/filtered/SE.tsv", comp=comparisons),
+        rMATS_paired = expand('results/rmats_paired/{comp}/filtered/SE.tsv', comp=comparisons)
