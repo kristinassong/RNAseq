@@ -1,8 +1,8 @@
-samples: ['22_1_n1_S2','22_2_n1_S3','22_1_n2_S7','22_2_n2_S8','NC5_n1_S1','NC5_n2_S6']
+samples: ['PEO_SNORA81_OVE_stable_N1','PEO_SNORA81_OVE_stable_N2','PEO_SNORA81_OVE_stable_N3','PEO_pcDNA3-1_stable_N1','PEO_pcDNA3-1_stable_N2','PEO_pcDNA3-1_stable_N3']
 
 path:
-  genome_fasta: "/home/kris98/projects/def-scottmic/kris98/annotation_datasets/Homo_sapiens.GRCh38.110.dna.primary_assembly.fa"
-  genome_gtf: "/home/kris98/projects/def-scottmic/kris98/annotation_datasets/Homo_sapiens.GRCh38.110_snoRNAs_tRNAs.gtf"
+  genome_fasta: "/home/kris98/projects/def-sabou/sabou_lab/Homo_sapiens.GRCh38.dna.primary_assembly_V101.fa"
+  genome_gtf: "/home/kris98/projects/def-scottmic/kris98/annotation_datasets/Scottlab_annotation_2020/hg38_Ensembl_V101_Scottlab_2020.gtf"
 
 params:
   readlength: 76 # for rMATS

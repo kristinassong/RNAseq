@@ -32,6 +32,9 @@ df = df.dropna(subset=['log2FoldChange', 'pvalue', 'padj'])
 # Only keep protein coding genes
 gtf = snakemake.params.gtf
 df_gtf = read_gtf(gtf).to_pandas()
+
+# df_gtf = pd.read_csv(gtf, sep='\t') # for annotations in tsv format
+
 df_gtf = df_gtf[df_gtf['gene_biotype']=='protein_coding']
 df = df[df.gene.isin(df_gtf.gene_id)]
 print("Total # of protein-coding DE genes")

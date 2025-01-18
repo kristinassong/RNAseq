@@ -23,7 +23,7 @@ rule multiqc:
     output:
         html = "results/multiqc/{comp}/multiqc_report.html"
     params:
-        scan_dir = "results/fastqc/pretrim results/fastqc/posttrim results/STAR/*/*Log.final.out results/logs/kallisto results/picard results/logs/trimmomatic",
+        scan_dir = "results/fastqc/posttrim results/STAR/*/*Log.final.out results/logs/kallisto results/picard results/logs/trimmomatic",
         outdir = directory("results/multiqc/{comp}")
     log:
         "results/logs/multiqc_{comp}.log"

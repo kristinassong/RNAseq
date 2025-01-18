@@ -83,7 +83,8 @@ rule merge_kallisto_quant:
         tx2gene = rules.tx2gene.output.tsv,
         gtf = config["path"]["genome_gtf"]
     output:
-        tpm = "results/kallisto/tpm_{comp}.tsv"
+        tpm = "results/kallisto/tpm_{comp}.tsv",
+        counts = "results/kallisto/counts_{comp}.tsv"
     conda:
         "../envs/python.yaml"
     message: 
