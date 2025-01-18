@@ -23,8 +23,8 @@ gtf = snakemake.params.gtf
 
 
 # Get all protein coding genes in gtf
-df_gtf = pr.read_gtf(gtf_file).df
-id_biotype = df_gtf[['gene_id','gene_biotype']].to_pandas().drop_duplicates(ignore_index=True)
+df_gtf = pr.read_gtf(gtf).df
+id_biotype = df_gtf[['gene_id','gene_biotype']].drop_duplicates(ignore_index=True)
 pc_genes_list = id_biotype[id_biotype['gene_biotype']=='protein_coding'].gene_id.tolist()
 
 
