@@ -1,1 +1,1 @@
-results/STAR/PEO_pcDNA3-1_stable_N1/PEO_pcDNA3-1_stable_N1_Aligned.sortedByCoord.out.primary.bam,results/STAR/PEO_pcDNA3-1_stable_N2/PEO_pcDNA3-1_stable_N2_Aligned.sortedByCoord.out.primary.bam,results/STAR/PEO_pcDNA3-1_stable_N3/PEO_pcDNA3-1_stable_N3_Aligned.sortedByCoord.out.primary.bam
+results/STAR/SKOV_pcDNA3-1_N1/SKOV_pcDNA3-1_N1_Aligned.sortedByCoord.out.primary.bam,results/STAR/SKOV_pcDNA3-1_N2/SKOV_pcDNA3-1_N2_Aligned.sortedByCoord.out.primary.bam,results/STAR/SKOV_pcDNA3-1_N4/SKOV_pcDNA3-1_N4_Aligned.sortedByCoord.out.primary.bam

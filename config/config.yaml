@@ -1,8 +1,8 @@
-samples: ['PEO_SNORA81_OVE_stable_N1','PEO_SNORA81_OVE_stable_N2','PEO_SNORA81_OVE_stable_N3','PEO_pcDNA3-1_stable_N1','PEO_pcDNA3-1_stable_N2','PEO_pcDNA3-1_stable_N3']
+samples: ['SKOV_SNORD22_OVE_N1','SKOV_SNORD22_OVE_N2','SKOV_SNORD22_OVE_N4','SKOV_pcDNA3-1_N1','SKOV_pcDNA3-1_N2','SKOV_pcDNA3-1_N4']
 
 path:
   genome_fasta: "/home/kris98/projects/def-sabou/sabou_lab/Homo_sapiens.GRCh38.dna.primary_assembly_V101.fa"
   genome_gtf: "/home/kris98/projects/def-scottmic/kris98/annotation_datasets/Scottlab_annotation_2020/hg38_Ensembl_V101_Scottlab_2020.gtf"
 
 params:
-  readlength: 76 # for rMATS
+  readlength: 80 # for rMATS

@@ -4,7 +4,7 @@ import pandas as pd
 import shutil
 import argparse
 import os
-from gtfparse import read_gtf
+import pyranges as pr
 import numpy as np
 
 
@@ -23,7 +23,7 @@ gtf = snakemake.params.gtf
 
 
 # Get all protein coding genes in gtf
-df_gtf = read_gtf(gtf)
+df_gtf = pr.read_gtf(gtf_file).df
 id_biotype = df_gtf[['gene_id','gene_biotype']].to_pandas().drop_duplicates(ignore_index=True)
 pc_genes_list = id_biotype[id_biotype['gene_biotype']=='protein_coding'].gene_id.tolist()
 
@@ -50,17 +50,6 @@ def filter_by_basePSI(df,bp_low,bp_high):
     df = df[(df['IncLevel1_avg']>=bp_low) & (df['IncLevel1_avg']<=bp_high) & (df['IncLevel2_avg']>=bp_low) & (df['IncLevel2_avg']<=bp_high)]
     df.drop(columns=['IncLevel1_avg','IncLevel2_avg'],inplace=True)
     return df
-
-
-def filter_by_threshold(df,fdr,deltapsi,rc,bp_low,bp_high):
-    """
-    Filter rMATS output by FDR and IncLevelDifference
-    """
-    filtered_df = filter_by_readcounts(df,rc)
-    filtered_df = filtered_df[filtered_df['FDR']<=fdr]
-    filtered_df = filter_by_basePSI(filtered_df,bp_low,bp_high)
-    filtered_df = filtered_df[filtered_df['IncLevelDifference'].abs()>=deltapsi]
-    return filtered_df
 
 
 def filter_by_tpm(rmats_df,tpm_df):
@@ -93,11 +82,19 @@ for event in SPLICING_EVENTS:
     file = os.path.join(raw_dir, event)
     event_type = event.split(".")[0]
     df = pd.read_csv(file, sep='\t')
-    filtered_df = filter_by_threshold(df,fdr,deltapsi,rc,bp_low,bp_high)
-    filtered_df = filter_by_tpm(filtered_df,tpm_df)
+
+    # All significant AS events
+    filtered_df = filter_by_readcounts(df,rc)
+    filtered_df = filter_by_basePSI(filtered_df,bp_low,bp_high)
+    all_sig_df = filter_by_tpm(filtered_df,tpm_df)
+
+    # Differential AS events
+    diff_df = all_sig_df[all_sig_df['FDR']<=fdr]
+    diff_df = diff_df[diff_df['IncLevelDifference'].abs()>=deltapsi]
 
     # Splicing events filtered by threshold and TPM
-    filtered_df.to_csv(os.path.join(out_dir,event_type+'.tsv'),sep='\t',index=None)
+    all_sig_df.to_csv(os.path.join(out_dir,'all_sig_'+event_type+'.tsv'),sep='\t',index=None)
+    diff_df.to_csv(os.path.join(out_dir,'diff_'+event_type+'.tsv'),sep='\t',index=None)
 
 
 # Delete tmp directory

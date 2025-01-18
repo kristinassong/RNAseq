@@ -1,1 +1,1 @@
-results/STAR/PEO_SNORA81_OVE_stable_N1/PEO_SNORA81_OVE_stable_N1_Aligned.sortedByCoord.out.primary.bam,results/STAR/PEO_SNORA81_OVE_stable_N2/PEO_SNORA81_OVE_stable_N2_Aligned.sortedByCoord.out.primary.bam,results/STAR/PEO_SNORA81_OVE_stable_N3/PEO_SNORA81_OVE_stable_N3_Aligned.sortedByCoord.out.primary.bam
+results/STAR/SKOV_SNORD22_OVE_N1/SKOV_SNORD22_OVE_N1_Aligned.sortedByCoord.out.primary.bam,results/STAR/SKOV_SNORD22_OVE_N2/SKOV_SNORD22_OVE_N2_Aligned.sortedByCoord.out.primary.bam,results/STAR/SKOV_SNORD22_OVE_N4/SKOV_SNORD22_OVE_N4_Aligned.sortedByCoord.out.primary.bam

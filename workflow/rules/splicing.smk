@@ -22,10 +22,12 @@ rule rmats:
 
 rule filter_rmats:
     input:
-        summary = rules.rmats.output.summary,
-        tpm = rules.merge_kallisto_quant.output.tpm
+        #summary = rules.rmats.output.summary,
+        summary = "results/rmats/{comp}/raw/summary.txt",
+        tpm = "results/kallisto/tpm_{comp}.tsv"
+        #tpm = rules.merge_kallisto_quant.output.tpm
     output:
-        result = 'results/rmats/{comp}/filtered/SE.tsv'
+        result = 'results/rmats/{comp}/filtered/diff_SE.tsv'
     params:
         dir = directory("results/rmats/{comp}"),
         gtf = config["path"]["genome_gtf"],
@@ -86,7 +88,7 @@ rule filter_rmats_paired:
         summary = rules.rmats_paired.output.summary,
         tpm = rules.merge_kallisto_quant.output.tpm
     output:
-        result = 'results/rmats_paired/{comp}/filtered/SE.tsv'
+        result = 'results/rmats_paired/{comp}/filtered/diff_SE.tsv'
     params:
         dir = directory("results/rmats_paired/{comp}"),
         gtf = config["path"]["genome_gtf"],
