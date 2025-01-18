@@ -22,10 +22,8 @@ rule rmats:
 
 rule filter_rmats:
     input:
-        #summary = rules.rmats.output.summary,
-        summary = "results/rmats/{comp}/raw/summary.txt",
-        tpm = "results/kallisto/tpm_{comp}.tsv"
-        #tpm = rules.merge_kallisto_quant.output.tpm
+        summary = rules.rmats.output.summary,
+        tpm = rules.merge_kallisto_quant.output.tpm
     output:
         result = 'results/rmats/{comp}/filtered/diff_SE.tsv'
     params:
