@@ -1,7 +1,7 @@
 #!/usr/bin/python3
 
 import pandas as pd
-from gtfparse import read_gtf
+import pyranges as pr
 import os
 
 tx2gene = snakemake.input.tx2gene
@@ -50,10 +50,8 @@ final_df_counts = pd.merge(final_df_counts, ids, left_index=True, right_index=Tr
 final_df_counts.set_index('gene', inplace=True)
 
 # Add gene name
-df_gtf = read_gtf(gtf)
-id_name = df_gtf[['gene_id','gene_name']].to_pandas().drop_duplicates(ignore_index=True)
-#df_gtf = pd.read_csv(gtf, sep='\t') # for annotations in tsv format
-#id_name = df_gtf[['gene_id','gene_name']].drop_duplicates(ignore_index=True)
+df_gtf = pr.read_gtf(gtf).df
+id_name = df_gtf[['gene_id','gene_name']].drop_duplicates(ignore_index=True)
 
 index = final_df_tpm.index.tolist()
 names =[]

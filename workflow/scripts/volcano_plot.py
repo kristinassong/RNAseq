@@ -9,7 +9,7 @@ Create a volcano plot to show DE genes identified by DESeq2.
 import pandas as pd
 import seaborn as sns
 import matplotlib.pyplot as plt
-from gtfparse import read_gtf
+import pyranges as pr
 import numpy as np
 
 
@@ -31,9 +31,7 @@ df = df.dropna(subset=['log2FoldChange', 'pvalue', 'padj'])
 # Filter genes by biotype
 # Only keep protein coding genes
 gtf = snakemake.params.gtf
-df_gtf = read_gtf(gtf).to_pandas()
-
-# df_gtf = pd.read_csv(gtf, sep='\t') # for annotations in tsv format
+df_gtf = pr.read_gtf(gtf).df
 
 df_gtf = df_gtf[df_gtf['gene_biotype']=='protein_coding']
 df = df[df.gene.isin(df_gtf.gene_id)]

@@ -6,7 +6,7 @@ dependencies:
   - numpy=1.26.3
   - pandas=2.1.4
   - polars=0.20.7
-  - gtfparse=2.5.0
+  - pyranges=0.1.2
   - matplotlib=3.8.2
   - seaborn=0.12.2
   - gprofiler-official=1.0.0
