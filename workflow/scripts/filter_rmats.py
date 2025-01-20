@@ -46,7 +46,7 @@ def filter_by_basePSI(df,bp_low,bp_high):
     Filter out events with average PSI <0.05 or >0.95 in both sample groups
     """
     for col in ['IncLevel1','IncLevel2']:
-        df[col+'_avg'] = df[col].str.split(',').apply(lambda x: np.mean([float(i) for i in x]))
+        df[col+'_avg'] = df[col].str.split(',').apply(lambda x: np.mean([float(i) for i in x]) if 'NA' not in x else -100)
     df = df[(df['IncLevel1_avg']>=bp_low) & (df['IncLevel1_avg']<=bp_high) & (df['IncLevel2_avg']>=bp_low) & (df['IncLevel2_avg']<=bp_high)]
     df.drop(columns=['IncLevel1_avg','IncLevel2_avg'],inplace=True)
     return df
