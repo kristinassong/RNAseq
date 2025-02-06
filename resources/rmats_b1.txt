@@ -1,1 +1,1 @@
-results/STAR/SKOV_SNORD22_OVE_N1/SKOV_SNORD22_OVE_N1_Aligned.sortedByCoord.out.primary.bam,results/STAR/SKOV_SNORD22_OVE_N2/SKOV_SNORD22_OVE_N2_Aligned.sortedByCoord.out.primary.bam,results/STAR/SKOV_SNORD22_OVE_N4/SKOV_SNORD22_OVE_N4_Aligned.sortedByCoord.out.primary.bam
+results/STAR/22_1_n1_S2/22_1_n1_S2_Aligned.sortedByCoord.out.primary.bam,results/STAR/22_1_n2_S7/22_1_n2_S7_Aligned.sortedByCoord.out.primary.bam,results/STAR/22_2_n1_S3/22_2_n1_S3_Aligned.sortedByCoord.out.primary.bam,results/STAR/22_2_n2_S8/22_2_n2_S8_Aligned.sortedByCoord.out.primary.bam

@@ -17,7 +17,7 @@ rule rmats:
     shell:
         "rmats.py --b1 {input.group1} --b2 {input.group2} "
         "--gtf {input.gtf} -t paired --readLength {params.readlength} --variable-read-length "
-        "--nthread 4 --od {output.outdir} --tmp {output.tmpdir}"
+        "--allow-clipping --nthread 4 --od {output.outdir} --tmp {output.tmpdir}"
 
 
 rule filter_rmats:
@@ -29,7 +29,7 @@ rule filter_rmats:
     params:
         dir = directory("results/rmats/{comp}"),
         gtf = config["path"]["genome_gtf"],
-        fdr = 0.05, # recommended threshold: <=5%
+        fdr = 0.01, # recommended threshold: <=1%
         deltapsi = 0.05, # recommended threshold: >=5%
         rc = 10, # recommended thershold: 10
         basepsi_low = 0.05, # recommended thershold: 0.05
@@ -78,7 +78,7 @@ rule rmats_paired:
     shell:
         "rmats.py --b1 {input.group1} --b2 {input.group2} "
         "--gtf {input.gtf} -t paired --readLength {params.readlength} --variable-read-length --paired-stats "
-        "--nthread 4 --od {output.outdir} --tmp {output.tmpdir}"
+        "--allow-clipping --nthread 4 --od {output.outdir} --tmp {output.tmpdir}"
 
 
 rule filter_rmats_paired:
@@ -90,7 +90,7 @@ rule filter_rmats_paired:
     params:
         dir = directory("results/rmats_paired/{comp}"),
         gtf = config["path"]["genome_gtf"],
-        fdr = 0.05, # recommended threshold: <=5%
+        fdr = 0.01, # recommended threshold: <=1%
         deltapsi = 0.05, # recommended threshold: >=5%
         rc = 10, # recommended thershold: 10
         basepsi_low = 0.05, # recommended thershold: 0.05

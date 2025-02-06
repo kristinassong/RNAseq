@@ -85,7 +85,7 @@ for event in SPLICING_EVENTS:
 
     # All significant AS events
     filtered_df = filter_by_readcounts(df,rc)
-    filtered_df = filter_by_basePSI(filtered_df,bp_low,bp_high)
+    #filtered_df = filter_by_basePSI(filtered_df,bp_low,bp_high)
     all_sig_df = filter_by_tpm(filtered_df,tpm_df)
 
     # Differential AS events
